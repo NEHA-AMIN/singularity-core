@@ -30,6 +30,8 @@ const Overview = () => {
   const [reviewed, setReviewed] = useState<string[]>([]);
   const [showNoteModal, setShowNoteModal] = useState(false);
   const [newNote, setNewNote] = useState("");
+  const [dragIdx, setDragIdx] = useState<number | null>(null);
+  const [dragOverIdx, setDragOverIdx] = useState<number | null>(null);
   const navigate = useNavigate();
   const now = new Date();
   const year = now.getFullYear(), month = now.getMonth(), today = now.getDate();
