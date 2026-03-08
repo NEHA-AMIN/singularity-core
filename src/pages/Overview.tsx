@@ -295,7 +295,7 @@ const Overview = () => {
 
             {/* ACTIVE PROJECTS */}
             <div style={{
-              background: "rgba(255,255,255,0.03)", borderRadius: 16, padding: "16px 14px", position: "relative",
+              background: "rgba(255,255,255,0.03)", borderRadius: 16, padding: "16px 14px 40px", position: "relative",
               border: "1px solid rgba(100,140,255,0.15)",
               boxShadow: "0 0 20px rgba(57,208,255,0.06), 0 0 20px rgba(139,92,255,0.06), 0 0 20px rgba(255,79,216,0.06)",
             }}>
@@ -443,7 +443,7 @@ const Overview = () => {
               })}
 
               {/* Category add dots */}
-              <div style={{ display: "flex", justifyContent: "center", gap: 12, marginTop: 10, paddingTop: 8, borderTop: "1px solid rgba(255,255,255,0.04)" }}>
+              <div style={{ position: "absolute", bottom: 10, left: 0, right: 0, display: "flex", justifyContent: "center", gap: 12 }}>
                 {PROJECT_CATEGORIES.map((cat) => (
                   <div
                     key={cat.key}
