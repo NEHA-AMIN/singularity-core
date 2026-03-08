@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const QUOTES = [
@@ -74,6 +74,20 @@ const STATUS_BUTTONS = [
   },
 ];
 
+const PROJECT_CATEGORIES = [
+  { key: "in_progress", s: "IN PROGRESS", g: "linear-gradient(90deg,#8B5CFF,#39D0FF)", fc: "#8B5CFF", bc: "rgba(139,92,255,0.08)", bb: "rgba(139,92,255,0.2)" },
+  { key: "on_track", s: "ON TRACK", g: "linear-gradient(90deg,#1FD3C6,#39D0FF)", fc: "#39D0FF", bc: "rgba(57,208,255,0.08)", bb: "rgba(57,208,255,0.2)" },
+  { key: "at_risk", s: "AT RISK", g: "linear-gradient(90deg,#FF8A3D,#FF4FD8)", fc: "#FF8A3D", bc: "rgba(255,138,61,0.08)", bb: "rgba(255,138,61,0.2)" },
+  { key: "planning", s: "PLANNING", g: "linear-gradient(90deg,#4a5568,#8B5CFF)", fc: "#9AA3B2", bc: "rgba(100,100,120,0.08)", bb: "rgba(100,100,120,0.2)" },
+];
+
+const INITIAL_PROJECTS: Record<string, string[]> = {
+  in_progress: ["GRL Paper"],
+  on_track: ["NeurIPS Paper"],
+  at_risk: ["Springer NDE"],
+  planning: ["Space Science"],
+};
+
 const Overview = () => {
   const [notes, setNotes] = useState<string[]>(INITIAL_NOTES);
   const [reviewed, setReviewed] = useState<string[]>([]);
@@ -86,6 +100,12 @@ const Overview = () => {
   const [hoveredPriority, setHoveredPriority] = useState<number | null>(null);
   const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const navigate = useNavigate();
+
+  // Active Projects state
+  const [projects, setProjects] = useState<Record<string, string[]>>(INITIAL_PROJECTS);
+  const [addProjectDialog, setAddProjectDialog] = useState<string | null>(null); // category key
+  const [newProjectName, setNewProjectName] = useState("");
+  const [newlyAdded, setNewlyAdded] = useState<string | null>(null); // "catKey-index" for animation
   const now = new Date();
   const year = now.getFullYear(), month = now.getMonth(), today = now.getDate();
   const monthName = now.toLocaleString("default", { month: "long" });
@@ -135,6 +155,12 @@ const Overview = () => {
         @media (max-width: 680px) { .los-grid3 { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 440px) { .los-grid3 { grid-template-columns: 1fr; } }
         @keyframes flameFlicker { 0%,100% { transform: scale(1) rotate(0deg); } 25% { transform: scale(1.05) rotate(-2deg); } 75% { transform: scale(1.08) rotate(2deg); } }
+        @keyframes slideAppend {
+          0% { opacity: 0; transform: translateY(-8px) scale(0.95); }
+          60% { opacity: 1; transform: translateY(2px) scale(1.01); }
+          100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .slide-append { animation: slideAppend 0.4s cubic-bezier(0.22,1,0.36,1) forwards; }
       `}</style>
 
       <div style={{ width: "100%", maxWidth: 780 }}>
@@ -271,33 +297,135 @@ const Overview = () => {
               boxShadow: "0 0 20px rgba(57,208,255,0.06), 0 0 20px rgba(139,92,255,0.06), 0 0 20px rgba(255,79,216,0.06)",
             }}>
               <div className="los-h">Active Projects</div>
-              {[
-                { n: "GRL Paper", s: "IN PROGRESS", g: "linear-gradient(90deg,#8B5CFF,#39D0FF)", fc: "#8B5CFF", bc: "rgba(139,92,255,0.08)", bb: "rgba(139,92,255,0.2)" },
-                { n: "NeurIPS Paper", s: "ON TRACK", g: "linear-gradient(90deg,#1FD3C6,#39D0FF)", fc: "#39D0FF", bc: "rgba(57,208,255,0.08)", bb: "rgba(57,208,255,0.2)" },
-                { n: "Springer NDE", s: "AT RISK", g: "linear-gradient(90deg,#FF8A3D,#FF4FD8)", fc: "#FF8A3D", bc: "rgba(255,138,61,0.08)", bb: "rgba(255,138,61,0.2)" },
-                { n: "Space Science", s: "PLANNING", g: "linear-gradient(90deg,#4a5568,#8B5CFF)", fc: "#9AA3B2", bc: "rgba(100,100,120,0.08)", bb: "rgba(100,100,120,0.2)" },
-              ].map((p, i) => (
-                <div key={i} style={{
-                  background: p.bc, border: `1px solid ${p.bb}`,
-                  borderRadius: 10, padding: "10px 12px", marginBottom: i < 3 ? 8 : 0,
-                  display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10,
-                }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    <svg width="14" height="12" viewBox="0 0 14 12" fill="none" style={{ flexShrink: 0 }}>
-                      <path d="M1 3V10C1 10.55 1.45 11 2 11H12C12.55 11 13 10.55 13 10V4C13 3.45 12.55 3 12 3H7L5.5 1H2C1.45 1 1 1.45 1 2V3Z" fill={p.fc} opacity="0.8"/>
-                    </svg>
-                    <span style={{ fontFamily: "'Raleway',sans-serif", fontSize: 11, fontWeight: 500, color: "#E8ECF4", letterSpacing: 0.5 }}>{p.n}</span>
-                  </div>
-                  <div style={{
-                    background: p.g, borderRadius: 14,
-                    padding: "3px 12px",
-                    fontFamily: "'Raleway',sans-serif", fontSize: 8, fontWeight: 700,
-                    color: "#fff", letterSpacing: 1.2, textTransform: "uppercase",
-                    whiteSpace: "nowrap", flexShrink: 0,
-                  }}>{p.s}</div>
-                </div>
-              ))}
+              {PROJECT_CATEGORIES.map((cat) => {
+                const catProjects = projects[cat.key] || [];
+                return catProjects.map((projName, pi) => {
+                  const animKey = `${cat.key}-${pi}`;
+                  const isNew = newlyAdded === animKey;
+                  return (
+                    <div key={animKey} className={isNew ? "slide-append" : ""} onAnimationEnd={() => { if (isNew) setNewlyAdded(null); }} style={{
+                      background: cat.bc, border: `1px solid ${cat.bb}`,
+                      borderRadius: 10, padding: "10px 12px", marginBottom: 8,
+                      display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10,
+                    }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        {/* Priority dot */}
+                        <div style={{
+                          width: 8, height: 8, borderRadius: "50%", flexShrink: 0,
+                          background: cat.fc,
+                          boxShadow: `0 0 6px ${cat.fc}88, 0 0 12px ${cat.fc}44`,
+                        }} />
+                        <svg width="14" height="12" viewBox="0 0 14 12" fill="none" style={{ flexShrink: 0 }}>
+                          <path d="M1 3V10C1 10.55 1.45 11 2 11H12C12.55 11 13 10.55 13 10V4C13 3.45 12.55 3 12 3H7L5.5 1H2C1.45 1 1 1.45 1 2V3Z" fill={cat.fc} opacity="0.8"/>
+                        </svg>
+                        <span style={{ fontFamily: "'Raleway',sans-serif", fontSize: 11, fontWeight: 500, color: "#E8ECF4", letterSpacing: 0.5 }}>{projName}</span>
+                      </div>
+                      <div
+                        onClick={() => { setAddProjectDialog(cat.key); setNewProjectName(""); }}
+                        style={{
+                          background: cat.g, borderRadius: 14,
+                          padding: "3px 12px", cursor: "pointer",
+                          fontFamily: "'Raleway',sans-serif", fontSize: 8, fontWeight: 700,
+                          color: "#fff", letterSpacing: 1.2, textTransform: "uppercase",
+                          whiteSpace: "nowrap", flexShrink: 0,
+                          transition: "filter 0.2s ease",
+                        }}
+                        onMouseEnter={e => e.currentTarget.style.filter = "brightness(1.2)"}
+                        onMouseLeave={e => e.currentTarget.style.filter = "brightness(1)"}
+                      >{cat.s}</div>
+                    </div>
+                  );
+                });
+              })}
             </div>
+
+            {/* ADD PROJECT DIALOG */}
+            {addProjectDialog && (() => {
+              const cat = PROJECT_CATEGORIES.find(c => c.key === addProjectDialog)!;
+              const handleAdd = () => {
+                if (newProjectName.trim()) {
+                  setProjects(prev => ({
+                    ...prev,
+                    [cat.key]: [...(prev[cat.key] || []), newProjectName.trim()],
+                  }));
+                  setNewlyAdded(`${cat.key}-${(projects[cat.key] || []).length}`);
+                  setNewProjectName("");
+                  setAddProjectDialog(null);
+                }
+              };
+              return (
+                <div
+                  onClick={() => setAddProjectDialog(null)}
+                  style={{
+                    position: "fixed", inset: 0, zIndex: 9999,
+                    background: "rgba(0,0,0,0.7)", backdropFilter: "blur(6px)",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                  }}
+                >
+                  <div
+                    onClick={e => e.stopPropagation()}
+                    style={{
+                      width: 360, background: "#0a0a14",
+                      border: `1px solid ${cat.bb}`, borderRadius: 16,
+                      padding: 24, boxShadow: `0 0 40px ${cat.fc}22`,
+                      animation: "slideAppend 0.35s cubic-bezier(0.22,1,0.36,1) forwards",
+                    }}
+                  >
+                    {/* Status badge */}
+                    <div style={{ marginBottom: 18 }}>
+                      <div style={{
+                        display: "inline-block",
+                        background: cat.g, borderRadius: 14,
+                        padding: "4px 16px",
+                        fontFamily: "'Raleway',sans-serif", fontSize: 9, fontWeight: 700,
+                        color: "#fff", letterSpacing: 1.2, textTransform: "uppercase",
+                      }}>{cat.s}</div>
+                    </div>
+
+                    <div style={{ fontFamily: "'Raleway',sans-serif", fontSize: 14, fontWeight: 600, color: "#E8ECF4", letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 14 }}>Add Project</div>
+
+                    <input
+                      autoFocus
+                      value={newProjectName}
+                      onChange={e => setNewProjectName(e.target.value)}
+                      onKeyDown={e => { if (e.key === "Enter") handleAdd(); }}
+                      placeholder="Project name..."
+                      style={{
+                        width: "100%", height: 42, background: "rgba(255,255,255,0.04)",
+                        border: `1px solid ${cat.bb}`, borderRadius: 10,
+                        padding: "0 14px", color: "#E8ECF4", fontFamily: "'Raleway',sans-serif", fontSize: 13,
+                        outline: "none", letterSpacing: 0.5,
+                        transition: "border-color 0.2s ease",
+                      }}
+                      onFocus={e => e.currentTarget.style.borderColor = cat.fc}
+                      onBlur={e => e.currentTarget.style.borderColor = cat.bb}
+                    />
+
+                    <div style={{ display: "flex", gap: 10, marginTop: 18, justifyContent: "flex-end" }}>
+                      <button
+                        onClick={() => { setAddProjectDialog(null); setNewProjectName(""); }}
+                        style={{
+                          fontFamily: "'Raleway',sans-serif", fontSize: 11, fontWeight: 600,
+                          color: "#9AA3B2", background: "rgba(255,255,255,0.05)",
+                          border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8,
+                          padding: "8px 18px", cursor: "pointer", letterSpacing: 1,
+                        }}
+                      >CANCEL</button>
+                      <button
+                        onClick={handleAdd}
+                        style={{
+                          fontFamily: "'Raleway',sans-serif", fontSize: 11, fontWeight: 600,
+                          color: "#fff", background: cat.g,
+                          border: "none", borderRadius: 8,
+                          padding: "8px 18px", cursor: "pointer", letterSpacing: 1,
+                          boxShadow: `0 0 12px ${cat.fc}44`,
+                        }}
+                      >ADD</button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
 
             {/* QUICK NOTES */}
             <div className="los-card bk" style={{
