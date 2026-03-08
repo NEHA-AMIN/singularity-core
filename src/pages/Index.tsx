@@ -67,7 +67,7 @@ const Index = () => {
         <div className="flex justify-end" style={{ padding: "16px 14px 8px" }}>
           <button
             style={{
-              fontFamily: "'Cinzel', serif", fontSize: 14, fontWeight: 800,
+              fontFamily: "'Cinzel', serif", fontSize: 14, fontWeight: 700,
               color: "#c4b5fd", letterSpacing: 5,
               background: "linear-gradient(135deg, rgba(22,16,40,0.9), rgba(14,10,28,0.95))",
               border: "1.5px solid rgba(100,70,160,0.35)",

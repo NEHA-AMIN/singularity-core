@@ -120,7 +120,7 @@ const CalendarPanel = () => {
             border: `1px solid ${SPRINT_LOG[dk(year, month, today)] ? "rgba(168,85,247,0.3)" : "rgba(255,255,255,0.05)"}`,
             borderRadius: 6,
           }}>
-            <span style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: 12, color: SPRINT_LOG[dk(year, month, today)] ? "#c084fc" : "rgba(255,255,255,0.3)" }}>
+            <span style={{ fontFamily: "'Cormorant', serif", fontSize: 13, fontWeight: 400, color: SPRINT_LOG[dk(year, month, today)] ? "#c084fc" : "rgba(255,255,255,0.3)" }}>
               {SPRINT_LOG[dk(year, month, today)] ? `${SPRINT_LOG[dk(year, month, today)]} sprints completed` : "No sprints yet"}
             </span>
           </div>

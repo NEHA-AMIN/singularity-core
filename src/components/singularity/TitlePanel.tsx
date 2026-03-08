@@ -24,7 +24,7 @@ const TitlePanel = () => (
       />
     ))}
 
-    <div style={{ fontFamily: "'Cinzel Decorative', serif", fontWeight: 900, lineHeight: 1 }}>
+    <div style={{ fontFamily: "'Cinzel', serif", fontWeight: 900, lineHeight: 1 }}>
       <div className="flex items-baseline justify-center">
         <span style={{ fontSize: 28, color: "#e8e4f0", letterSpacing: 1 }}>S</span>
         <span style={{ fontSize: 16, color: "#c4b5fd", letterSpacing: 3 }}>OLO</span>
@@ -42,7 +42,7 @@ const TitlePanel = () => (
     </div>
     <div
       style={{
-        fontFamily: "'Rajdhani', sans-serif", fontSize: 12, fontWeight: 500,
+        fontFamily: "'Cormorant', serif", fontSize: 13, fontWeight: 400,
         color: "rgba(255,255,255,0.35)", letterSpacing: 6,
         textTransform: "uppercase", marginTop: 8,
       }}
