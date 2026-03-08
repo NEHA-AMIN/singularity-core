@@ -59,7 +59,7 @@ const Index = () => {
         </div>
 
         {/* GOAL BUTTON */}
-        <div className="flex justify-center" style={{ padding: "16px 14px 8px" }}>
+        <div className="flex justify-center gap-3" style={{ padding: "16px 14px 8px" }}>
           <button
             className="glass-button"
             style={{
@@ -73,6 +73,20 @@ const Index = () => {
             <div style={{ position: "absolute", top: -1, right: -1, width: 10, height: 10, borderTop: "2px solid rgba(139,92,246,0.5)", borderRight: "2px solid rgba(139,92,246,0.5)", borderTopRightRadius: 10 }} />
             <div style={{ position: "absolute", bottom: -1, left: -1, width: 10, height: 10, borderBottom: "2px solid rgba(139,92,246,0.5)", borderLeft: "2px solid rgba(139,92,246,0.5)", borderBottomLeftRadius: 10 }} />
             PLAY
+          </button>
+          <button
+            className="glass-button"
+            style={{
+              fontFamily: "'Cinzel', serif", fontSize: 14, fontWeight: 700,
+              color: "#c4b5fd", letterSpacing: 5,
+              padding: "12px 32px",
+              cursor: "pointer", animation: "playGlow 3s infinite",
+              textTransform: "uppercase", position: "relative",
+            }}
+          >
+            <div style={{ position: "absolute", top: -1, right: -1, width: 10, height: 10, borderTop: "2px solid rgba(139,92,246,0.5)", borderRight: "2px solid rgba(139,92,246,0.5)", borderTopRightRadius: 10 }} />
+            <div style={{ position: "absolute", bottom: -1, left: -1, width: 10, height: 10, borderBottom: "2px solid rgba(139,92,246,0.5)", borderLeft: "2px solid rgba(139,92,246,0.5)", borderBottomLeftRadius: 10 }} />
+            OVERVIEW
           </button>
         </div>
 
