@@ -25,6 +25,13 @@ const INITIAL_NOTES = [
   "Read RoPE paper by Su et al.",
 ];
 
+const PRIORITY_COLORS: Record<string, { bg: string; border: string; label: string }> = {
+  red: { bg: "rgba(255,60,60,0.12)", border: "rgba(255,60,60,0.3)", label: "🔴 Urgent" },
+  yellow: { bg: "rgba(255,200,50,0.12)", border: "rgba(255,200,50,0.3)", label: "🟡 Next" },
+  green: { bg: "rgba(50,220,100,0.12)", border: "rgba(50,220,100,0.3)", label: "🟢 Has Time" },
+  purple: { bg: "rgba(160,100,255,0.12)", border: "rgba(160,100,255,0.3)", label: "🟣 Leisure" },
+};
+
 const Overview = () => {
   const [notes, setNotes] = useState<string[]>(INITIAL_NOTES);
   const [reviewed, setReviewed] = useState<string[]>([]);
@@ -32,6 +39,9 @@ const Overview = () => {
   const [newNote, setNewNote] = useState("");
   const [dragIdx, setDragIdx] = useState<number | null>(null);
   const [dragOverIdx, setDragOverIdx] = useState<number | null>(null);
+  const [priorities, setPriorities] = useState<Record<number, string>>({});
+  const [priorityPopup, setPriorityPopup] = useState<number | null>(null);
+  const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const navigate = useNavigate();
   const now = new Date();
   const year = now.getFullYear(), month = now.getMonth(), today = now.getDate();
