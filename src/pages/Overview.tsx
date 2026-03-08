@@ -350,7 +350,7 @@ const Overview = () => {
                       return (
                         <div key={animKey} className={isNew ? "slide-append" : ""} onAnimationEnd={() => { if (isNew) setNewlyAdded(null); }} style={{
                           padding: "6px 4px", position: "relative",
-                          borderTop: pi > 0 ? `1px solid ${cat.bb}` : "none",
+                          
                         }}>
                           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
                             <div
