@@ -155,6 +155,12 @@ const Overview = () => {
         @media (max-width: 680px) { .los-grid3 { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 440px) { .los-grid3 { grid-template-columns: 1fr; } }
         @keyframes flameFlicker { 0%,100% { transform: scale(1) rotate(0deg); } 25% { transform: scale(1.05) rotate(-2deg); } 75% { transform: scale(1.08) rotate(2deg); } }
+        @keyframes slideAppend {
+          0% { opacity: 0; transform: translateY(-8px) scale(0.95); }
+          60% { opacity: 1; transform: translateY(2px) scale(1.01); }
+          100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .slide-append { animation: slideAppend 0.4s cubic-bezier(0.22,1,0.36,1) forwards; }
       `}</style>
 
       <div style={{ width: "100%", maxWidth: 780 }}>
