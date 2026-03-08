@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { GothicTopBorder, GothicBottomBorder } from "@/components/singularity/GothicBorder";
 import { GodQuoteOverlay, SanctuaryOverlay } from "@/components/singularity/Overlays";
 import TitlePanel from "@/components/singularity/TitlePanel";
