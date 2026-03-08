@@ -78,6 +78,7 @@ const Index = () => {
           </button>
           <button
             className="glass-button"
+            onClick={() => navigate("/overview")}
             style={{
               fontFamily: "'Cinzel', serif", fontSize: 14, fontWeight: 700,
               color: "#c4b5fd", letterSpacing: 5,
