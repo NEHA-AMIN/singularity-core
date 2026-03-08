@@ -327,21 +327,7 @@ const Overview = () => {
                   <div key={cat.key} style={{
                     background: cat.bc, border: `1px solid ${cat.bb}`,
                     borderRadius: 10, padding: "8px 10px", marginBottom: 8,
-                  }}>
-                    {/* Category label */}
-                    <div style={{
-                      display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: catProjects.length > 0 ? 6 : 0,
                     }}>
-                      <div style={{
-                        fontFamily: "'Raleway',sans-serif", fontSize: 8, fontWeight: 700,
-                        color: cat.fc, letterSpacing: 1.2, textTransform: "uppercase", opacity: 0.7,
-                      }}>{cat.s}</div>
-                      <div style={{
-                        background: cat.g, borderRadius: 14, padding: "2px 10px",
-                        fontFamily: "'Raleway',sans-serif", fontSize: 7, fontWeight: 700,
-                        color: "#fff", letterSpacing: 1,
-                      }}>{catProjects.length}</div>
-                    </div>
                     {catProjects.map((projName, pi) => {
                       const animKey = `${cat.key}-${pi}`;
                       const isNew = newlyAdded === animKey;
