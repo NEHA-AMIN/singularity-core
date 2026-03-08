@@ -295,6 +295,20 @@ const Overview = () => {
                         updated.splice(dragOverIdx, 0, moved);
                         return updated;
                       });
+                      // Reindex priorities
+                      setPriorities(prev => {
+                        const reindexed: Record<number, string> = {};
+                        const entries = Object.entries(prev).map(([k, v]) => [Number(k), v] as [number, string]);
+                        const ordered = entries.sort((a, b) => a[0] - b[0]);
+                        const idxMap: number[] = Array.from({ length: notes.length }, (_, x) => x);
+                        const [movedIdx] = idxMap.splice(dragIdx, 1);
+                        idxMap.splice(dragOverIdx, 0, movedIdx);
+                        idxMap.forEach((origIdx, newIdx) => {
+                          const p = prev[origIdx];
+                          if (p) reindexed[newIdx] = p;
+                        });
+                        return reindexed;
+                      });
                     }
                     setDragIdx(null);
                     setDragOverIdx(null);
