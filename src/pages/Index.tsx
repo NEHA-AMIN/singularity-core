@@ -17,6 +17,7 @@ const QUOTES = [
 ];
 
 const Index = () => {
+  const navigate = useNavigate();
   const [showSanctuary, setShowSanctuary] = useState(false);
   const [showGod, setShowGod] = useState(true);
 
