@@ -25,12 +25,54 @@ const INITIAL_NOTES = [
   "Read RoPE paper by Su et al.",
 ];
 
-const PRIORITY_COLORS: Record<string, { bg: string; border: string; label: string }> = {
-  red: { bg: "rgba(255,60,60,0.12)", border: "rgba(255,60,60,0.3)", label: "🔴 Urgent" },
-  yellow: { bg: "rgba(255,200,50,0.12)", border: "rgba(255,200,50,0.3)", label: "🟡 Next" },
-  green: { bg: "rgba(50,220,100,0.12)", border: "rgba(50,220,100,0.3)", label: "🟢 Has Time" },
-  purple: { bg: "rgba(160,100,255,0.12)", border: "rgba(160,100,255,0.3)", label: "🟣 Leisure" },
-};
+const STATUS_BUTTONS = [
+  {
+    key: "red", label: "Urgent", textColor: "#FF5555", ring: "#FF4444",
+    tint: "rgba(255, 68, 68, 0.12)", glow: "rgba(255, 68, 68, 0.3)",
+    border: "rgba(255,60,60,0.3)",
+    icon: (c: string) => (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <circle cx="8" cy="8" r="7" fill={c} />
+        <path d="M8 4.5V9" stroke="#0a0a0a" strokeWidth="2" strokeLinecap="round" />
+        <circle cx="8" cy="11.5" r="1.1" fill="#0a0a0a" />
+      </svg>
+    ),
+  },
+  {
+    key: "yellow", label: "Next Imp", textColor: "#FACC15", ring: "#FACC15",
+    tint: "rgba(250, 204, 21, 0.1)", glow: "rgba(250, 204, 21, 0.25)",
+    border: "rgba(250,204,21,0.3)",
+    icon: (c: string) => (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <circle cx="8" cy="8" r="7" fill={c} />
+        <path d="M8 4v5l3 2" stroke="#0a0a0a" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    ),
+  },
+  {
+    key: "green", label: "Have Time", textColor: "#34D399", ring: "#34D399",
+    tint: "rgba(52, 211, 153, 0.1)", glow: "rgba(52, 211, 153, 0.25)",
+    border: "rgba(52,211,153,0.3)",
+    icon: (c: string) => (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <circle cx="8" cy="8" r="7" fill={c} />
+        <path d="M5 8.2L7.2 10.4L11 5.6" stroke="#0a0a0a" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    ),
+  },
+  {
+    key: "purple", label: "Leisure", textColor: "#A78BFA", ring: "#A78BFA",
+    tint: "rgba(167, 139, 250, 0.11)", glow: "rgba(167, 139, 250, 0.28)",
+    border: "rgba(167,139,250,0.3)",
+    icon: (c: string) => (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <circle cx="8" cy="8" r="7" fill={c} />
+        <path d="M5.5 6.5C5.5 6.5 6.5 5.5 8 5.5C9.5 5.5 10.5 6.5 10.5 6.5" stroke="#0a0a0a" strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M5.5 10C5.5 10 6.5 11.2 8 11.2C9.5 11.2 10.5 10 10.5 10" stroke="#0a0a0a" strokeWidth="1.5" strokeLinecap="round" />
+      </svg>
+    ),
+  },
+];
 
 const Overview = () => {
   const [notes, setNotes] = useState<string[]>(INITIAL_NOTES);
@@ -41,6 +83,7 @@ const Overview = () => {
   const [dragOverIdx, setDragOverIdx] = useState<number | null>(null);
   const [priorities, setPriorities] = useState<Record<number, string>>({});
   const [priorityPopup, setPriorityPopup] = useState<number | null>(null);
+  const [hoveredPriority, setHoveredPriority] = useState<number | null>(null);
   const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const navigate = useNavigate();
   const now = new Date();
@@ -321,9 +364,9 @@ const Overview = () => {
                     background: dragOverIdx === i && dragIdx !== i
                       ? "rgba(255,79,216,0.06)"
                       : priorities[i]
-                        ? PRIORITY_COLORS[priorities[i]]?.bg ?? "transparent"
+                        ? (STATUS_BUTTONS.find(b => b.key === priorities[i])?.tint ?? "transparent")
                         : "transparent",
-                    border: priorities[i] ? `1px solid ${PRIORITY_COLORS[priorities[i]]?.border ?? "transparent"}` : "1px solid transparent",
+                    border: priorities[i] ? `1px solid ${STATUS_BUTTONS.find(b => b.key === priorities[i])?.border ?? "transparent"}` : "1px solid transparent",
                     borderRadius: 6,
                     transition: "background 0.15s ease, opacity 0.15s ease, border-color 0.15s ease",
                     position: "relative",
@@ -343,52 +386,102 @@ const Overview = () => {
                     ))}
                   </div>
 
-                  {/* Priority popup */}
+                  {/* Priority popup — glass pill buttons */}
                   {priorityPopup === i && (
                     <>
-                      <div onClick={() => setPriorityPopup(null)} style={{ position: "fixed", inset: 0, zIndex: 99 }} />
+                      <div onClick={() => { setPriorityPopup(null); setHoveredPriority(null); }} style={{ position: "fixed", inset: 0, zIndex: 99 }} />
                       <div style={{
-                        position: "absolute", left: 24, top: -4, zIndex: 100,
-                        background: "#12101e", border: "1px solid rgba(255,79,216,0.25)",
-                        borderRadius: 10, padding: 6, display: "flex", flexDirection: "column", gap: 2,
-                        boxShadow: "0 4px 20px rgba(0,0,0,0.6), 0 0 15px rgba(255,79,216,0.1)",
-                        minWidth: 130,
+                        position: "absolute", left: 28, top: -8, zIndex: 100,
+                        background: "rgba(10,10,10,0.92)", border: "1px solid rgba(255,255,255,0.06)",
+                        borderRadius: 16, padding: 8, display: "flex", flexDirection: "column", gap: 6,
+                        boxShadow: "0 8px 40px rgba(0,0,0,0.7), 0 0 20px rgba(139,92,255,0.08)",
+                        backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)",
+                        minWidth: 172,
                       }}>
-                        {Object.entries(PRIORITY_COLORS).map(([key, val]) => (
-                          <button
-                            key={key}
-                            onClick={() => {
-                              setPriorities(prev => ({ ...prev, [i]: key }));
-                              setPriorityPopup(null);
-                            }}
-                            style={{
-                              background: priorities[i] === key ? val.bg : "transparent",
-                              border: "none", borderRadius: 6, padding: "6px 10px",
-                              fontFamily: "'Raleway',sans-serif", fontSize: 11, fontWeight: 500,
-                              color: "#E8ECF4", cursor: "pointer", textAlign: "left",
-                              transition: "background 0.15s ease",
-                            }}
-                            onMouseEnter={e => e.currentTarget.style.background = val.bg}
-                            onMouseLeave={e => { if (priorities[i] !== key) e.currentTarget.style.background = "transparent"; }}
-                          >
-                            {val.label}
-                          </button>
-                        ))}
+                        {STATUS_BUTTONS.map((btn, idx) => {
+                          const isHover = hoveredPriority === idx;
+                          const isActive = priorities[i] === btn.key;
+                          return (
+                            <div
+                              key={btn.key}
+                              style={{ position: "relative", borderRadius: 100, cursor: "pointer" }}
+                              onMouseEnter={() => setHoveredPriority(idx)}
+                              onMouseLeave={() => setHoveredPriority(null)}
+                              onClick={() => {
+                                setPriorities(prev => ({ ...prev, [i]: btn.key }));
+                                setPriorityPopup(null);
+                                setHoveredPriority(null);
+                              }}
+                            >
+                              {/* Halo glow on hover */}
+                              <div style={{
+                                position: "absolute", inset: -8, borderRadius: 100, pointerEvents: "none", zIndex: -1,
+                                opacity: isHover ? 1 : 0, transition: "opacity 0.4s ease, box-shadow 0.4s ease",
+                                boxShadow: isHover ? `0 0 28px ${btn.glow}, 0 0 56px ${btn.glow.replace(/[\d.]+\)$/, "0.14)")}, 0 0 80px ${btn.glow.replace(/[\d.]+\)$/, "0.06)")}` : "none",
+                              }} />
+                              {/* Border ring */}
+                              <div style={{
+                                position: "absolute", inset: 0, borderRadius: 100, pointerEvents: "none", zIndex: 1,
+                                border: `1px solid rgba(255,255,255,${isHover ? 0.04 : 0.08})`,
+                                transition: "border-color 0.3s ease",
+                              }} />
+                              {/* Glass pill */}
+                              <div style={{
+                                position: "relative", display: "flex", alignItems: "center", gap: 10,
+                                padding: "8px 18px 8px 14px", borderRadius: 100, fontSize: 13, fontWeight: 500,
+                                letterSpacing: "0.02em", color: btn.textColor, overflow: "hidden", zIndex: 2, width: "100%",
+                                fontFamily: "'Raleway', sans-serif",
+                                background: isHover || isActive ? btn.tint : "rgba(255,255,255,0.04)",
+                                backdropFilter: "blur(20px) saturate(1.4)", WebkitBackdropFilter: "blur(20px) saturate(1.4)",
+                                boxShadow: isHover
+                                  ? "0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1)"
+                                  : "0 4px 16px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.06)",
+                                transition: "all 0.35s cubic-bezier(0.4,0,0.2,1)",
+                                transform: isHover ? "translateY(-1px)" : "translateY(0)",
+                              }}>
+                                {/* Top refraction */}
+                                <div style={{
+                                  position: "absolute", top: 0, left: "8%", right: "8%", height: "50%",
+                                  borderRadius: "100px 100px 50% 50%", pointerEvents: "none",
+                                  background: `linear-gradient(180deg, rgba(255,255,255,${isHover ? 0.06 : 0.04}) 0%, transparent 100%)`,
+                                  transition: "all 0.35s ease",
+                                }} />
+                                <span style={{
+                                  position: "relative", zIndex: 2, display: "flex", alignItems: "center", flexShrink: 0,
+                                  filter: isHover ? `drop-shadow(0 0 5px ${btn.ring}66)` : "none",
+                                  transition: "filter 0.35s ease",
+                                }}>
+                                  {btn.icon(btn.textColor)}
+                                </span>
+                                <span style={{
+                                  position: "relative", zIndex: 2, whiteSpace: "nowrap",
+                                  textShadow: isHover ? `0 0 8px ${btn.ring}44` : "none",
+                                  transition: "text-shadow 0.35s ease",
+                                }}>
+                                  {btn.label}
+                                </span>
+                              </div>
+                            </div>
+                          );
+                        })}
                         {priorities[i] && (
-                          <button
+                          <div
                             onClick={() => {
                               setPriorities(prev => { const n = { ...prev }; delete n[i]; return n; });
-                              setPriorityPopup(null);
+                              setPriorityPopup(null); setHoveredPriority(null);
                             }}
                             style={{
-                              background: "transparent", border: "none", borderRadius: 6,
-                              padding: "6px 10px", fontFamily: "'Raleway',sans-serif", fontSize: 10,
-                              fontWeight: 500, color: "#9AA3B2", cursor: "pointer", textAlign: "left",
+                              textAlign: "center", padding: "6px 10px", cursor: "pointer",
+                              fontFamily: "'Raleway',sans-serif", fontSize: 10, fontWeight: 500,
+                              color: "rgba(255,255,255,0.3)", letterSpacing: 1,
                               borderTop: "1px solid rgba(255,255,255,0.06)", marginTop: 2,
+                              transition: "color 0.2s ease",
                             }}
+                            onMouseEnter={e => e.currentTarget.style.color = "rgba(255,255,255,0.6)"}
+                            onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.3)"}
                           >
-                            ✕ Clear
-                          </button>
+                            ✕ CLEAR
+                          </div>
                         )}
                       </div>
                     </>
