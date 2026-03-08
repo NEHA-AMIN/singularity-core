@@ -83,6 +83,7 @@ const Overview = () => {
   const [dragOverIdx, setDragOverIdx] = useState<number | null>(null);
   const [priorities, setPriorities] = useState<Record<number, string>>({});
   const [priorityPopup, setPriorityPopup] = useState<number | null>(null);
+  const [hoveredPriority, setHoveredPriority] = useState<number | null>(null);
   const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const navigate = useNavigate();
   const now = new Date();
