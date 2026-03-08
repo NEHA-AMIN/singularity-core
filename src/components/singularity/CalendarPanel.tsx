@@ -44,7 +44,7 @@ const CalendarPanel = () => {
             border: done ? "1px solid rgba(168,85,247,0.35)" : isToday ? "1px solid rgba(139,92,246,0.3)" : "1px solid rgba(255,255,255,0.03)",
           }}>
             <span style={{
-              fontFamily: "'Rajdhani', sans-serif", fontSize: calView === "weekly" ? 14 : 11,
+              fontFamily: "'Cormorant', serif", fontSize: calView === "weekly" ? 14 : 11,
               fontWeight: isToday ? 700 : 500,
               color: done ? "#c084fc" : isToday ? "#a78bfa" : "rgba(255,255,255,0.25)",
             }}>{day}</span>
