@@ -64,7 +64,7 @@ const Index = () => {
         </div>
 
         {/* GOAL BUTTON */}
-        <div className="flex justify-end" style={{ padding: "16px 14px 8px" }}>
+        <div className="flex justify-center" style={{ padding: "16px 14px 8px" }}>
           <button
             style={{
               fontFamily: "'Cinzel', serif", fontSize: 14, fontWeight: 700,
@@ -83,18 +83,6 @@ const Index = () => {
         </div>
 
         <GothicBottomBorder />
-
-        {/* Footer */}
-        <div
-          className="text-center"
-          style={{
-            padding: "4px 0 16px",
-            fontFamily: "'Cormorant', serif", fontSize: 9, fontWeight: 300,
-            color: "rgba(255,255,255,0.06)", letterSpacing: 4, textTransform: "uppercase",
-          }}
-        >
-          Project Singularity · v1.0
-        </div>
       </div>
     </div>
   );
