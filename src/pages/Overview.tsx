@@ -364,9 +364,9 @@ const Overview = () => {
                     background: dragOverIdx === i && dragIdx !== i
                       ? "rgba(255,79,216,0.06)"
                       : priorities[i]
-                        ? PRIORITY_COLORS[priorities[i]]?.bg ?? "transparent"
+                        ? (STATUS_BUTTONS.find(b => b.key === priorities[i])?.tint ?? "transparent")
                         : "transparent",
-                    border: priorities[i] ? `1px solid ${PRIORITY_COLORS[priorities[i]]?.border ?? "transparent"}` : "1px solid transparent",
+                    border: priorities[i] ? `1px solid ${STATUS_BUTTONS.find(b => b.key === priorities[i])?.border ?? "transparent"}` : "1px solid transparent",
                     borderRadius: 6,
                     transition: "background 0.15s ease, opacity 0.15s ease, border-color 0.15s ease",
                     position: "relative",
