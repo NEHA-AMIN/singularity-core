@@ -443,7 +443,7 @@ const Overview = () => {
               })}
 
               {/* Category add dots */}
-              <div style={{ display: "flex", justifyContent: "center", gap: 12, marginTop: 10, paddingTop: 8, borderTop: "1px solid rgba(255,255,255,0.04)" }}>
+              <div style={{ position: "absolute", bottom: 10, left: 0, right: 0, display: "flex", justifyContent: "center", gap: 12 }}>
                 {PROJECT_CATEGORIES.map((cat) => (
                   <div
                     key={cat.key}
