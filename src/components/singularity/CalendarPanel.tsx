@@ -44,7 +44,7 @@ const CalendarPanel = () => {
             border: done ? "1px solid rgba(168,85,247,0.35)" : isToday ? "1px solid rgba(139,92,246,0.3)" : "1px solid rgba(255,255,255,0.03)",
           }}>
             <span style={{
-              fontFamily: "'Rajdhani', sans-serif", fontSize: calView === "weekly" ? 14 : 11,
+              fontFamily: "'Cormorant', serif", fontSize: calView === "weekly" ? 14 : 11,
               fontWeight: isToday ? 700 : 500,
               color: done ? "#c084fc" : isToday ? "#a78bfa" : "rgba(255,255,255,0.25)",
             }}>{day}</span>
@@ -86,7 +86,7 @@ const CalendarPanel = () => {
                 width: 22, height: 18, borderRadius: 3, border: "none",
                 background: calView === key ? "rgba(139,92,246,0.25)" : "rgba(255,255,255,0.03)",
                 color: calView === key ? "#c4b5fd" : "rgba(255,255,255,0.2)",
-                fontFamily: "'Rajdhani', sans-serif", fontSize: 9, fontWeight: 600,
+                fontFamily: "'Cormorant', serif", fontSize: 9, fontWeight: 500,
                 cursor: "pointer", letterSpacing: 0.5,
               }}>{v}</button>
             );
@@ -98,7 +98,7 @@ const CalendarPanel = () => {
       {calView !== "daily" && (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 3, marginBottom: 4 }}>
           {["S", "M", "T", "W", "T", "F", "S"].map((d, i) => (
-            <div key={i} style={{ textAlign: "center", fontFamily: "'Rajdhani', sans-serif", fontSize: 9, fontWeight: 600, color: "rgba(255,255,255,0.3)" }}>{d}</div>
+            <div key={i} style={{ textAlign: "center", fontFamily: "'Cormorant', serif", fontSize: 9, fontWeight: 500, color: "rgba(255,255,255,0.3)" }}>{d}</div>
           ))}
         </div>
       )}
@@ -111,7 +111,7 @@ const CalendarPanel = () => {
             fontFamily: "'Cinzel', serif", fontSize: 36, fontWeight: 700,
             color: "#c4b5fd", textShadow: "0 0 20px rgba(139,92,246,0.4)",
           }}>{today}</div>
-          <div style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: 11, color: "rgba(255,255,255,0.35)", letterSpacing: 3, marginTop: 4, textTransform: "uppercase" }}>
+          <div style={{ fontFamily: "'Cormorant', serif", fontSize: 12, fontWeight: 400, color: "rgba(255,255,255,0.35)", letterSpacing: 3, marginTop: 4, textTransform: "uppercase" }}>
             {now.toLocaleString("default", { weekday: "long" })}
           </div>
           <div style={{
@@ -120,7 +120,7 @@ const CalendarPanel = () => {
             border: `1px solid ${SPRINT_LOG[dk(year, month, today)] ? "rgba(168,85,247,0.3)" : "rgba(255,255,255,0.05)"}`,
             borderRadius: 6,
           }}>
-            <span style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: 12, color: SPRINT_LOG[dk(year, month, today)] ? "#c084fc" : "rgba(255,255,255,0.3)" }}>
+            <span style={{ fontFamily: "'Cormorant', serif", fontSize: 13, fontWeight: 400, color: SPRINT_LOG[dk(year, month, today)] ? "#c084fc" : "rgba(255,255,255,0.3)" }}>
               {SPRINT_LOG[dk(year, month, today)] ? `${SPRINT_LOG[dk(year, month, today)]} sprints completed` : "No sprints yet"}
             </span>
           </div>

@@ -1,27 +1,15 @@
 const SkillBar = ({ label, fillPercent }: { label: string; fillPercent: string }) => (
   <div style={{ marginBottom: 12 }}>
     <div style={{
-      fontFamily: "'Rajdhani', sans-serif", fontSize: 13, fontWeight: 500,
+      fontFamily: "'Cormorant', serif", fontSize: 14, fontWeight: 400,
       color: "rgba(255,255,255,0.6)", marginBottom: 4, letterSpacing: 0.5,
     }}>
       {label}
     </div>
-    <div style={{
-      width: "100%", height: 18, background: "rgba(0,0,0,0.4)",
-      borderRadius: 4, border: "1px solid rgba(74,222,128,0.15)",
-      overflow: "hidden", position: "relative",
-    }}>
-      <div style={{
-        width: fillPercent, height: "100%", borderRadius: 4,
-        background: "linear-gradient(90deg, #16a34a 0%, #22c55e 30%, #4ade80 60%, #86efac 85%, #bbf7d0 100%)",
-        animation: "greenPulse 2s ease-in-out infinite",
-        position: "relative",
-      }}>
-        <div style={{
-          position: "absolute", top: 2, left: "5%", right: "15%", height: 4,
-          background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)",
-          borderRadius: 2,
-        }} />
+    <div className="bar-track">
+      <div className="bar-fill" style={{ width: fillPercent }}>
+        <div className="bar-gloss" />
+        <div className="bar-spec" />
       </div>
     </div>
   </div>
@@ -49,7 +37,7 @@ const AvatarSkillRow = () => (
         }} />
         <div className="relative z-[2] flex items-center justify-center" style={{ width: 80, height: 100, borderRadius: "50% / 42%" }}>
           <div style={{
-            fontFamily: "'Rajdhani', sans-serif", fontSize: 9,
+            fontFamily: "'Cormorant', serif", fontSize: 9,
             color: "rgba(139,92,246,0.4)", letterSpacing: 2,
             textTransform: "uppercase", textAlign: "center", lineHeight: 1.4,
           }}>
@@ -68,12 +56,12 @@ const AvatarSkillRow = () => (
         SKILL POINTS
       </div>
 
-      <SkillBar label="Creativity" fillPercent="72%" />
-      <SkillBar label="Health" fillPercent="99%" />
+      <SkillBar label="Scholar" fillPercent="72%" />
+      <SkillBar label="Spartan" fillPercent="99%" />
 
       <div className="flex justify-between items-baseline">
-        <span style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: 13, fontWeight: 500, color: "rgba(255,255,255,0.45)" }}>495/500</span>
-        <span style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: 18, fontWeight: 700, color: "rgba(255,255,255,0.65)", letterSpacing: 1 }}>4,533,012</span>
+        <span style={{ fontFamily: "'Cormorant', serif", fontSize: 14, fontWeight: 400, color: "rgba(255,255,255,0.45)" }}>495/500</span>
+        <span style={{ fontFamily: "'Cormorant', serif", fontSize: 19, fontWeight: 500, color: "rgba(255,255,255,0.65)", letterSpacing: 1 }}>4,533,012</span>
       </div>
     </div>
   </div>

@@ -21,7 +21,6 @@ const QuoteWall = () => {
         position: "relative",
       }}
     >
-      {/* Mini spikes */}
       <svg viewBox="0 0 120 8" style={{ position: "absolute", top: -5, left: 15, right: 15, width: "calc(100% - 30px)", height: 8 }}>
         <path d="M0,8 L15,8 L20,2 L25,8 L45,8 L50,0 L55,8 L75,8 L80,2 L85,8 L105,8 L110,3 L115,8 L120,8" fill="none" stroke="rgba(139,92,246,0.25)" strokeWidth="0.8" />
       </svg>
@@ -35,16 +34,16 @@ const QuoteWall = () => {
           Quote Wall
         </div>
         <div style={{
-          fontFamily: "'Cinzel', serif", fontSize: 11, fontStyle: "italic",
+          fontFamily: "'Cormorant', serif", fontSize: 13, fontStyle: "italic",
           color: "rgba(255,255,255,0.4)", lineHeight: 1.7,
-          textAlign: "center", letterSpacing: 0.3,
+          textAlign: "center", letterSpacing: 0.3, fontWeight: 300,
         }}>
           "{todayQuote.text}"
         </div>
       </div>
 
       <div style={{
-        fontFamily: "'Rajdhani', sans-serif", fontSize: 9, fontWeight: 600,
+        fontFamily: "'Cormorant', serif", fontSize: 10, fontWeight: 500,
         color: "#a78bfa", letterSpacing: 2, textAlign: "center",
         marginTop: 10, textTransform: "uppercase",
       }}>

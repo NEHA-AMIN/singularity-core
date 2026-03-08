@@ -67,7 +67,7 @@ const Index = () => {
         <div className="flex justify-end" style={{ padding: "16px 14px 8px" }}>
           <button
             style={{
-              fontFamily: "'Cinzel', serif", fontSize: 14, fontWeight: 800,
+              fontFamily: "'Cinzel', serif", fontSize: 14, fontWeight: 700,
               color: "#c4b5fd", letterSpacing: 5,
               background: "linear-gradient(135deg, rgba(22,16,40,0.9), rgba(14,10,28,0.95))",
               border: "1.5px solid rgba(100,70,160,0.35)",
@@ -89,7 +89,7 @@ const Index = () => {
           className="text-center"
           style={{
             padding: "4px 0 16px",
-            fontFamily: "'Rajdhani', sans-serif", fontSize: 8,
+            fontFamily: "'Cormorant', serif", fontSize: 9, fontWeight: 300,
             color: "rgba(255,255,255,0.06)", letterSpacing: 4, textTransform: "uppercase",
           }}
         >
