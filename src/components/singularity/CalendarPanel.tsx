@@ -111,7 +111,7 @@ const CalendarPanel = () => {
             fontFamily: "'Cinzel', serif", fontSize: 36, fontWeight: 700,
             color: "#c4b5fd", textShadow: "0 0 20px rgba(139,92,246,0.4)",
           }}>{today}</div>
-          <div style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: 11, color: "rgba(255,255,255,0.35)", letterSpacing: 3, marginTop: 4, textTransform: "uppercase" }}>
+          <div style={{ fontFamily: "'Cormorant', serif", fontSize: 12, fontWeight: 400, color: "rgba(255,255,255,0.35)", letterSpacing: 3, marginTop: 4, textTransform: "uppercase" }}>
             {now.toLocaleString("default", { weekday: "long" })}
           </div>
           <div style={{
