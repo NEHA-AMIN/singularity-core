@@ -16,7 +16,19 @@ const SPRINT_LOG: Record<string, number> = {
 const dk = (y: number, m: number, d: number) =>
   `${y}-${String(m + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
 
+const INITIAL_NOTES = [
+  "Look into LoRA fine-tuning...",
+  "TensorTonic ep. on eigenvalues",
+  "Baishali email re: conference",
+  "New SHAP visualization idea",
+  "Chinmay — schedule lock-in",
+  "Read RoPE paper by Su et al.",
+];
+
 const Overview = () => {
+  const [notes, setNotes] = useState<string[]>(INITIAL_NOTES);
+  const [showNoteModal, setShowNoteModal] = useState(false);
+  const [newNote, setNewNote] = useState("");
   const navigate = useNavigate();
   const now = new Date();
   const year = now.getFullYear(), month = now.getMonth(), today = now.getDate();
@@ -237,26 +249,101 @@ const Overview = () => {
               backgroundSize: "100% 32px",
               backgroundPosition: "0 52px",
             }}>
-              <div className="los-h">Quick Notes</div>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div className="los-h" style={{ marginBottom: 0 }}>Quick Notes</div>
+                <button
+                  onClick={() => setShowNoteModal(true)}
+                  style={{
+                    width: 28, height: 28, borderRadius: "50%",
+                    background: "rgba(255,79,216,0.12)", border: "1px solid rgba(255,79,216,0.35)",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    cursor: "pointer", fontSize: 14, color: "#FF4FD8",
+                    transition: "box-shadow 0.3s ease, background 0.3s ease",
+                    boxShadow: "0 0 8px rgba(255,79,216,0.15)",
+                    marginBottom: 14,
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.boxShadow = "0 0 16px rgba(255,79,216,0.4)"; e.currentTarget.style.background = "rgba(255,79,216,0.2)"; }}
+                  onMouseLeave={e => { e.currentTarget.style.boxShadow = "0 0 8px rgba(255,79,216,0.15)"; e.currentTarget.style.background = "rgba(255,79,216,0.12)"; }}
+                >
+                  ✎
+                </button>
+              </div>
               <div style={{ display: "flex", alignItems: "center", marginBottom: 14, padding: "5px 10px", borderRadius: 16, border: "1px solid rgba(255,79,216,0.15)", background: "rgba(255,79,216,0.03)" }}>
                 <span style={{ fontFamily: "'Raleway',sans-serif", fontSize: 9, fontWeight: 600, color: "#9AA3B2", letterSpacing: 1 }}>CAPTURE BOX</span>
               </div>
-              {[
-                "Look into LoRA fine-tuning...",
-                "TensorTonic ep. on eigenvalues",
-                "Baishali email re: conference",
-                "New SHAP visualization idea",
-                "Chinmay — schedule lock-in",
-                "Read RoPE paper by Su et al.",
-              ].map((note, i) => (
+              {notes.map((note, i) => (
                 <div key={i} style={{
                   padding: "8px 0",
-                  borderBottom: i < 5 ? "1px solid rgba(255,79,216,0.08)" : "none",
+                  borderBottom: i < notes.length - 1 ? "1px solid rgba(255,79,216,0.08)" : "none",
                 }}>
                   <div style={{ fontFamily: "'Caveat',cursive", fontSize: 15, fontWeight: 400, color: "#FF4FD8", lineHeight: 1.4, textShadow: "0 0 6px rgba(255,79,216,0.1)" }}>{note}</div>
                 </div>
               ))}
             </div>
+
+            {/* NOTE MODAL */}
+            {showNoteModal && (
+              <div
+                onClick={() => setShowNoteModal(false)}
+                style={{
+                  position: "fixed", inset: 0, zIndex: 9999,
+                  background: "rgba(0,0,0,0.7)", backdropFilter: "blur(6px)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                }}
+              >
+                <div
+                  onClick={e => e.stopPropagation()}
+                  style={{
+                    width: 340, background: "#0a0a14",
+                    border: "1px solid rgba(255,79,216,0.3)", borderRadius: 16,
+                    padding: 24, boxShadow: "0 0 40px rgba(255,79,216,0.15)",
+                  }}
+                >
+                  <div style={{ fontFamily: "'Raleway',sans-serif", fontSize: 14, fontWeight: 600, color: "#E8ECF4", letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 16 }}>Add a Note</div>
+                  <textarea
+                    autoFocus
+                    value={newNote}
+                    onChange={e => setNewNote(e.target.value)}
+                    placeholder="Type your note..."
+                    style={{
+                      width: "100%", minHeight: 80, background: "rgba(255,255,255,0.04)",
+                      border: "1px solid rgba(255,79,216,0.2)", borderRadius: 10,
+                      padding: 12, color: "#FF4FD8", fontFamily: "'Caveat',cursive", fontSize: 16,
+                      resize: "vertical", outline: "none",
+                    }}
+                    onFocus={e => e.currentTarget.style.borderColor = "rgba(255,79,216,0.5)"}
+                    onBlur={e => e.currentTarget.style.borderColor = "rgba(255,79,216,0.2)"}
+                  />
+                  <div style={{ display: "flex", gap: 10, marginTop: 16, justifyContent: "flex-end" }}>
+                    <button
+                      onClick={() => { setShowNoteModal(false); setNewNote(""); }}
+                      style={{
+                        fontFamily: "'Raleway',sans-serif", fontSize: 11, fontWeight: 600,
+                        color: "#9AA3B2", background: "rgba(255,255,255,0.05)",
+                        border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8,
+                        padding: "8px 18px", cursor: "pointer", letterSpacing: 1,
+                      }}
+                    >CANCEL</button>
+                    <button
+                      onClick={() => {
+                        if (newNote.trim()) {
+                          setNotes(prev => [...prev, newNote.trim()]);
+                          setNewNote("");
+                          setShowNoteModal(false);
+                        }
+                      }}
+                      style={{
+                        fontFamily: "'Raleway',sans-serif", fontSize: 11, fontWeight: 600,
+                        color: "#fff", background: "linear-gradient(90deg,#FF4FD8,#8B5CFF)",
+                        border: "none", borderRadius: 8,
+                        padding: "8px 18px", cursor: "pointer", letterSpacing: 1,
+                        boxShadow: "0 0 12px rgba(255,79,216,0.3)",
+                      }}
+                    >ADD</button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* ━━━ ROW 3: Finance | Health | Reading ━━━ */}
