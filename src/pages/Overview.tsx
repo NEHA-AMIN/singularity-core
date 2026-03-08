@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
 const QUOTES = [
@@ -25,6 +25,13 @@ const INITIAL_NOTES = [
   "Read RoPE paper by Su et al.",
 ];
 
+const PRIORITY_COLORS: Record<string, { bg: string; border: string; label: string }> = {
+  red: { bg: "rgba(255,60,60,0.12)", border: "rgba(255,60,60,0.3)", label: "🔴 Urgent" },
+  yellow: { bg: "rgba(255,200,50,0.12)", border: "rgba(255,200,50,0.3)", label: "🟡 Next" },
+  green: { bg: "rgba(50,220,100,0.12)", border: "rgba(50,220,100,0.3)", label: "🟢 Has Time" },
+  purple: { bg: "rgba(160,100,255,0.12)", border: "rgba(160,100,255,0.3)", label: "🟣 Leisure" },
+};
+
 const Overview = () => {
   const [notes, setNotes] = useState<string[]>(INITIAL_NOTES);
   const [reviewed, setReviewed] = useState<string[]>([]);
@@ -32,6 +39,9 @@ const Overview = () => {
   const [newNote, setNewNote] = useState("");
   const [dragIdx, setDragIdx] = useState<number | null>(null);
   const [dragOverIdx, setDragOverIdx] = useState<number | null>(null);
+  const [priorities, setPriorities] = useState<Record<number, string>>({});
+  const [priorityPopup, setPriorityPopup] = useState<number | null>(null);
+  const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const navigate = useNavigate();
   const now = new Date();
   const year = now.getFullYear(), month = now.getMonth(), today = now.getDate();
@@ -285,34 +295,128 @@ const Overview = () => {
                         updated.splice(dragOverIdx, 0, moved);
                         return updated;
                       });
+                      // Reindex priorities
+                      setPriorities(prev => {
+                        const reindexed: Record<number, string> = {};
+                        const entries = Object.entries(prev).map(([k, v]) => [Number(k), v] as [number, string]);
+                        const ordered = entries.sort((a, b) => a[0] - b[0]);
+                        const idxMap: number[] = Array.from({ length: notes.length }, (_, x) => x);
+                        const [movedIdx] = idxMap.splice(dragIdx, 1);
+                        idxMap.splice(dragOverIdx, 0, movedIdx);
+                        idxMap.forEach((origIdx, newIdx) => {
+                          const p = prev[origIdx];
+                          if (p) reindexed[newIdx] = p;
+                        });
+                        return reindexed;
+                      });
                     }
                     setDragIdx(null);
                     setDragOverIdx(null);
                   }}
                   style={{
-                    padding: "8px 0",
+                    padding: "8px 4px",
                     borderBottom: i < notes.length - 1 ? "1px solid rgba(255,79,216,0.08)" : "none",
                     display: "flex", alignItems: "center", gap: 8,
                     opacity: dragIdx === i ? 0.4 : 1,
-                    background: dragOverIdx === i && dragIdx !== i ? "rgba(255,79,216,0.06)" : "transparent",
+                    background: dragOverIdx === i && dragIdx !== i
+                      ? "rgba(255,79,216,0.06)"
+                      : priorities[i]
+                        ? PRIORITY_COLORS[priorities[i]]?.bg ?? "transparent"
+                        : "transparent",
+                    border: priorities[i] ? `1px solid ${PRIORITY_COLORS[priorities[i]]?.border ?? "transparent"}` : "1px solid transparent",
                     borderRadius: 6,
-                    transition: "background 0.15s ease, opacity 0.15s ease",
+                    transition: "background 0.15s ease, opacity 0.15s ease, border-color 0.15s ease",
+                    position: "relative",
                   }}
                 >
-                  {/* Drag handle */}
-                  <div style={{
-                    cursor: "grab", flexShrink: 0, display: "flex", flexDirection: "column",
-                    alignItems: "center", justifyContent: "center", gap: 2, padding: "0 2px",
-                  }}>
+                  {/* Drag handle with long-press */}
+                  <div
+                    style={{
+                      cursor: "grab", flexShrink: 0, display: "flex", flexDirection: "column",
+                      alignItems: "center", justifyContent: "center", gap: 2, padding: "4px 4px",
+                      borderRadius: 4,
+                    }}
+                    onMouseDown={() => {
+                      longPressTimer.current = setTimeout(() => setPriorityPopup(i), 500);
+                    }}
+                    onMouseUp={() => { if (longPressTimer.current) clearTimeout(longPressTimer.current); }}
+                    onMouseLeave={() => { if (longPressTimer.current) clearTimeout(longPressTimer.current); }}
+                    onTouchStart={() => {
+                      longPressTimer.current = setTimeout(() => setPriorityPopup(i), 500);
+                    }}
+                    onTouchEnd={() => { if (longPressTimer.current) clearTimeout(longPressTimer.current); }}
+                  >
                     {[0, 1, 2].map(d => (
                       <div key={d} style={{ width: 3, height: 3, borderRadius: "50%", background: "rgba(255,79,216,0.35)" }} />
                     ))}
                   </div>
+
+                  {/* Priority popup */}
+                  {priorityPopup === i && (
+                    <>
+                      <div onClick={() => setPriorityPopup(null)} style={{ position: "fixed", inset: 0, zIndex: 99 }} />
+                      <div style={{
+                        position: "absolute", left: 24, top: -4, zIndex: 100,
+                        background: "#12101e", border: "1px solid rgba(255,79,216,0.25)",
+                        borderRadius: 10, padding: 6, display: "flex", flexDirection: "column", gap: 2,
+                        boxShadow: "0 4px 20px rgba(0,0,0,0.6), 0 0 15px rgba(255,79,216,0.1)",
+                        minWidth: 130,
+                      }}>
+                        {Object.entries(PRIORITY_COLORS).map(([key, val]) => (
+                          <button
+                            key={key}
+                            onClick={() => {
+                              setPriorities(prev => ({ ...prev, [i]: key }));
+                              setPriorityPopup(null);
+                            }}
+                            style={{
+                              background: priorities[i] === key ? val.bg : "transparent",
+                              border: "none", borderRadius: 6, padding: "6px 10px",
+                              fontFamily: "'Raleway',sans-serif", fontSize: 11, fontWeight: 500,
+                              color: "#E8ECF4", cursor: "pointer", textAlign: "left",
+                              transition: "background 0.15s ease",
+                            }}
+                            onMouseEnter={e => e.currentTarget.style.background = val.bg}
+                            onMouseLeave={e => { if (priorities[i] !== key) e.currentTarget.style.background = "transparent"; }}
+                          >
+                            {val.label}
+                          </button>
+                        ))}
+                        {priorities[i] && (
+                          <button
+                            onClick={() => {
+                              setPriorities(prev => { const n = { ...prev }; delete n[i]; return n; });
+                              setPriorityPopup(null);
+                            }}
+                            style={{
+                              background: "transparent", border: "none", borderRadius: 6,
+                              padding: "6px 10px", fontFamily: "'Raleway',sans-serif", fontSize: 10,
+                              fontWeight: 500, color: "#9AA3B2", cursor: "pointer", textAlign: "left",
+                              borderTop: "1px solid rgba(255,255,255,0.06)", marginTop: 2,
+                            }}
+                          >
+                            ✕ Clear
+                          </button>
+                        )}
+                      </div>
+                    </>
+                  )}
+
                   {/* Checkbox */}
                   <div
                     onClick={() => {
                       setNotes(prev => prev.filter((_, idx) => idx !== i));
                       setReviewed(prev => [...prev, note]);
+                      // Shift priority keys
+                      setPriorities(prev => {
+                        const updated: Record<number, string> = {};
+                        Object.entries(prev).forEach(([k, v]) => {
+                          const idx = Number(k);
+                          if (idx < i) updated[idx] = v;
+                          else if (idx > i) updated[idx - 1] = v;
+                        });
+                        return updated;
+                      });
                     }}
                     style={{
                       width: 16, height: 16, borderRadius: 4, flexShrink: 0, cursor: "pointer",
