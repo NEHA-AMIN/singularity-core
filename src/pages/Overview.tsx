@@ -413,16 +413,10 @@ const Overview = () => {
                                 setHoveredPriority(null);
                               }}
                             >
-                              {/* Halo glow on hover */}
-                              <div style={{
-                                position: "absolute", inset: -8, borderRadius: 100, pointerEvents: "none", zIndex: -1,
-                                opacity: isHover ? 1 : 0, transition: "opacity 0.4s ease, box-shadow 0.4s ease",
-                                boxShadow: isHover ? `0 0 28px ${btn.glow}, 0 0 56px ${btn.glow.replace(/[\d.]+\)$/, "0.14)")}, 0 0 80px ${btn.glow.replace(/[\d.]+\)$/, "0.06)")}` : "none",
-                              }} />
-                              {/* Border ring */}
+                              {/* Border ring — contained inside pill */}
                               <div style={{
                                 position: "absolute", inset: 0, borderRadius: 100, pointerEvents: "none", zIndex: 1,
-                                border: `1px solid rgba(255,255,255,${isHover ? 0.04 : 0.08})`,
+                                border: `1px solid ${isHover ? btn.ring + "44" : "rgba(255,255,255,0.08)"}`,
                                 transition: "border-color 0.3s ease",
                               }} />
                               {/* Glass pill */}
