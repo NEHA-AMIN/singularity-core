@@ -103,9 +103,12 @@ const Overview = () => {
 
   // Active Projects state
   const [projects, setProjects] = useState<Record<string, string[]>>(INITIAL_PROJECTS);
-  const [addProjectDialog, setAddProjectDialog] = useState<string | null>(null); // category key
+  const [addProjectDialog, setAddProjectDialog] = useState<string | null>(null);
   const [newProjectName, setNewProjectName] = useState("");
-  const [newlyAdded, setNewlyAdded] = useState<string | null>(null); // "catKey-index" for animation
+  const [newlyAdded, setNewlyAdded] = useState<string | null>(null);
+  const [projectMenu, setProjectMenu] = useState<{ catKey: string; idx: number } | null>(null);
+  const [projectAttachments, setProjectAttachments] = useState<Record<string, string[]>>({});
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const now = new Date();
   const year = now.getFullYear(), month = now.getMonth(), today = now.getDate();
   const monthName = now.toLocaleString("default", { month: "long" });
