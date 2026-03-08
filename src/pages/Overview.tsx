@@ -269,9 +269,6 @@ const Overview = () => {
                   ✎
                 </button>
               </div>
-              <div style={{ display: "flex", alignItems: "center", marginBottom: 14, padding: "5px 10px", borderRadius: 16, border: "1px solid rgba(255,79,216,0.15)", background: "rgba(255,79,216,0.03)" }}>
-                <span style={{ fontFamily: "'Raleway',sans-serif", fontSize: 9, fontWeight: 600, color: "#9AA3B2", letterSpacing: 1 }}>CAPTURE BOX</span>
-              </div>
               {notes.map((note, i) => (
                 <div key={`note-${i}`} style={{
                   padding: "8px 0",
