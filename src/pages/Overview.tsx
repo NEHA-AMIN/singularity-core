@@ -441,6 +441,25 @@ const Overview = () => {
                   );
                 });
               })}
+
+              {/* Category add dots */}
+              <div style={{ display: "flex", justifyContent: "center", gap: 12, marginTop: 10, paddingTop: 8, borderTop: "1px solid rgba(255,255,255,0.04)" }}>
+                {PROJECT_CATEGORIES.map((cat) => (
+                  <div
+                    key={cat.key}
+                    onClick={() => { setAddProjectDialog(cat.key); setNewProjectName(""); }}
+                    title={cat.s}
+                    style={{
+                      width: 14, height: 14, borderRadius: "50%", cursor: "pointer",
+                      background: cat.fc, opacity: 0.7,
+                      boxShadow: `0 0 8px ${cat.fc}66`,
+                      transition: "opacity 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease",
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.opacity = "1"; e.currentTarget.style.boxShadow = `0 0 14px ${cat.fc}aa`; e.currentTarget.style.transform = "scale(1.2)"; }}
+                    onMouseLeave={e => { e.currentTarget.style.opacity = "0.7"; e.currentTarget.style.boxShadow = `0 0 8px ${cat.fc}66`; e.currentTarget.style.transform = "scale(1)"; }}
+                  />
+                ))}
+              </div>
             </div>
 
             {/* ADD PROJECT DIALOG */}
