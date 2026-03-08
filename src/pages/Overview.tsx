@@ -25,12 +25,54 @@ const INITIAL_NOTES = [
   "Read RoPE paper by Su et al.",
 ];
 
-const PRIORITY_COLORS: Record<string, { bg: string; border: string; label: string }> = {
-  red: { bg: "rgba(255,60,60,0.12)", border: "rgba(255,60,60,0.3)", label: "🔴 Urgent" },
-  yellow: { bg: "rgba(255,200,50,0.12)", border: "rgba(255,200,50,0.3)", label: "🟡 Next" },
-  green: { bg: "rgba(50,220,100,0.12)", border: "rgba(50,220,100,0.3)", label: "🟢 Has Time" },
-  purple: { bg: "rgba(160,100,255,0.12)", border: "rgba(160,100,255,0.3)", label: "🟣 Leisure" },
-};
+const STATUS_BUTTONS = [
+  {
+    key: "red", label: "Urgent", textColor: "#FF5555", ring: "#FF4444",
+    tint: "rgba(255, 68, 68, 0.12)", glow: "rgba(255, 68, 68, 0.3)",
+    border: "rgba(255,60,60,0.3)",
+    icon: (c: string) => (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <circle cx="8" cy="8" r="7" fill={c} />
+        <path d="M8 4.5V9" stroke="#0a0a0a" strokeWidth="2" strokeLinecap="round" />
+        <circle cx="8" cy="11.5" r="1.1" fill="#0a0a0a" />
+      </svg>
+    ),
+  },
+  {
+    key: "yellow", label: "Next Imp", textColor: "#FACC15", ring: "#FACC15",
+    tint: "rgba(250, 204, 21, 0.1)", glow: "rgba(250, 204, 21, 0.25)",
+    border: "rgba(250,204,21,0.3)",
+    icon: (c: string) => (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <circle cx="8" cy="8" r="7" fill={c} />
+        <path d="M8 4v5l3 2" stroke="#0a0a0a" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    ),
+  },
+  {
+    key: "green", label: "Have Time", textColor: "#34D399", ring: "#34D399",
+    tint: "rgba(52, 211, 153, 0.1)", glow: "rgba(52, 211, 153, 0.25)",
+    border: "rgba(52,211,153,0.3)",
+    icon: (c: string) => (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <circle cx="8" cy="8" r="7" fill={c} />
+        <path d="M5 8.2L7.2 10.4L11 5.6" stroke="#0a0a0a" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    ),
+  },
+  {
+    key: "purple", label: "Leisure", textColor: "#A78BFA", ring: "#A78BFA",
+    tint: "rgba(167, 139, 250, 0.11)", glow: "rgba(167, 139, 250, 0.28)",
+    border: "rgba(167,139,250,0.3)",
+    icon: (c: string) => (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <circle cx="8" cy="8" r="7" fill={c} />
+        <path d="M5.5 6.5C5.5 6.5 6.5 5.5 8 5.5C9.5 5.5 10.5 6.5 10.5 6.5" stroke="#0a0a0a" strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M5.5 10C5.5 10 6.5 11.2 8 11.2C9.5 11.2 10.5 10 10.5 10" stroke="#0a0a0a" strokeWidth="1.5" strokeLinecap="round" />
+      </svg>
+    ),
+  },
+];
 
 const Overview = () => {
   const [notes, setNotes] = useState<string[]>(INITIAL_NOTES);
