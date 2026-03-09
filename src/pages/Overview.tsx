@@ -349,7 +349,7 @@ const Overview = () => {
                       animation: "slideAppend 0.35s cubic-bezier(0.22,1,0.36,1) forwards",
                     }}
                   >
-                    <div style={{ fontFamily: "'Raleway',sans-serif", fontSize: 14, fontWeight: 600, color: "#E8ECF4", letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 18 }}>Add Schedule Item</div>
+                    <div style={{ fontFamily: "'Raleway',sans-serif", fontSize: 14, fontWeight: 600, color: "#E8ECF4", letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 18 }}>{editingScheduleIdx !== null ? "Edit Schedule Item" : "Add Schedule Item"}</div>
 
                     {/* Emoji picker */}
                     <div style={{ marginBottom: 14 }}>
