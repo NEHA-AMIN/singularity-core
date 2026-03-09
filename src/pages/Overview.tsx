@@ -112,14 +112,15 @@ const Overview = () => {
 
   // Schedule state
   const [scheduleItems, setScheduleItems] = useState([
-    { t: "05:00 AM", n: "MATH SPRINT", d: "Linear algebra deep focus", dur: "45m", ic: "📐", c: "#39D0FF" },
-    { t: "06:00 AM", n: "GRL WRITING", d: "Discussion section draft", dur: "45m", ic: "📝", c: "#8B5CFF" },
-    { t: "09:00 AM", n: "IBM ISL WORK", d: "Daily high-visibility output", dur: "2h", ic: "💼", c: "#39D0FF" },
-    { t: "11:30 AM", n: "NEURIPS EXP.", d: "Positional encoding tests", dur: "45m", ic: "🔬", c: "#8B5CFF" },
-    { t: "06:00 PM", n: "GYM SESSION", d: "Evening training — calisthenics", dur: "1h", ic: "🏋", c: "#FF8A3D" },
+    { t: "05:00 AM", n: "MATH SPRINT", d: "Linear algebra deep focus", dur: "45m", ic: "📐", c: "#39D0FF", done: false },
+    { t: "06:00 AM", n: "GRL WRITING", d: "Discussion section draft", dur: "45m", ic: "📝", c: "#8B5CFF", done: false },
+    { t: "09:00 AM", n: "IBM ISL WORK", d: "Daily high-visibility output", dur: "2h", ic: "💼", c: "#39D0FF", done: false },
+    { t: "11:30 AM", n: "NEURIPS EXP.", d: "Positional encoding tests", dur: "45m", ic: "🔬", c: "#8B5CFF", done: false },
+    { t: "06:00 PM", n: "GYM SESSION", d: "Evening training — calisthenics", dur: "1h", ic: "🏋", c: "#FF8A3D", done: false },
   ]);
   const [showScheduleModal, setShowScheduleModal] = useState(false);
   const [schedForm, setSchedForm] = useState({ time: "", title: "", duration: "", desc: "", emoji: "⭐" });
+  const [editingScheduleIdx, setEditingScheduleIdx] = useState<number | null>(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
   const EMOJI_OPTIONS = ["📐","📝","💼","🔬","🏋","📖","🧘","🏃","💻","🎯","🎨","🎵","🍎","☕","🌙","⚡","🔥","💡","🚀","🎤"];
@@ -297,21 +298,35 @@ const Overview = () => {
                     transition: "box-shadow 0.3s ease, background 0.3s ease",
                     boxShadow: "0 0 8px rgba(57,208,255,0.15)",
                   }}
-                  onClick={() => { setShowScheduleModal(true); setSchedForm({ time: "", title: "", duration: "", desc: "", emoji: "⭐" }); setShowEmojiPicker(false); }}
+                  onClick={() => { setEditingScheduleIdx(null); setShowScheduleModal(true); setSchedForm({ time: "", title: "", duration: "", desc: "", emoji: "⭐" }); setShowEmojiPicker(false); }}
                   onMouseLeave={e => { e.currentTarget.style.boxShadow = "0 0 8px rgba(57,208,255,0.15)"; e.currentTarget.style.background = "rgba(57,208,255,0.12)"; }}
                 >+</button>
               </div>
               {scheduleItems.map((s, i) => (
-                <div key={i} style={{ display: "flex", gap: 10, marginBottom: 12, alignItems: "flex-start" }}>
+                <div
+                  key={i}
+                  onClick={() => {
+                    setEditingScheduleIdx(i);
+                    setSchedForm({ time: s.t, title: s.n, duration: s.dur, desc: s.d, emoji: s.ic });
+                    setShowScheduleModal(true);
+                    setShowEmojiPicker(false);
+                  }}
+                  style={{
+                    display: "flex", gap: 10, marginBottom: 12, alignItems: "flex-start",
+                    cursor: "pointer", opacity: s.done ? 0.45 : 1,
+                    transition: "opacity 0.2s ease",
+                  }}
+                >
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 0 }}>
                     <div style={{ width: 28, height: 28, borderRadius: "50%", background: `${s.c}15`, border: `1.5px solid ${s.c}44`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12 }}>{s.ic}</div>
                     {i < scheduleItems.length - 1 && <div style={{ width: 1.5, height: 16, background: `linear-gradient(180deg,${s.c}44,transparent)` }} />}
                   </div>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontFamily: "'Raleway',sans-serif", fontSize: 9, fontWeight: 500, color: s.c, letterSpacing: 0.5 }}>{s.t}</div>
-                    <div style={{ fontFamily: "'Raleway',sans-serif", fontSize: 12, fontWeight: 500, color: "#E8ECF4" }}>{s.n} ({s.dur})</div>
-                    <div style={{ fontFamily: "'Raleway',sans-serif", fontSize: 9, fontWeight: 400, color: "#9AA3B2", marginTop: 1 }}>{s.d}</div>
+                    <div style={{ fontFamily: "'Raleway',sans-serif", fontSize: 12, fontWeight: 500, color: "#E8ECF4", textDecoration: s.done ? "line-through" : "none" }}>{s.n} ({s.dur})</div>
+                    <div style={{ fontFamily: "'Raleway',sans-serif", fontSize: 9, fontWeight: 400, color: "#9AA3B2", marginTop: 1, textDecoration: s.done ? "line-through" : "none" }}>{s.d}</div>
                   </div>
+                  {s.done && <span style={{ fontFamily: "'Raleway',sans-serif", fontSize: 8, color: "#4ade80", fontWeight: 600, letterSpacing: 1 }}>✓ DONE</span>}
                 </div>
               ))}
 
@@ -334,7 +349,7 @@ const Overview = () => {
                       animation: "slideAppend 0.35s cubic-bezier(0.22,1,0.36,1) forwards",
                     }}
                   >
-                    <div style={{ fontFamily: "'Raleway',sans-serif", fontSize: 14, fontWeight: 600, color: "#E8ECF4", letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 18 }}>Add Schedule Item</div>
+                    <div style={{ fontFamily: "'Raleway',sans-serif", fontSize: 14, fontWeight: 600, color: "#E8ECF4", letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 18 }}>{editingScheduleIdx !== null ? "Edit Schedule Item" : "Add Schedule Item"}</div>
 
                     {/* Emoji picker */}
                     <div style={{ marginBottom: 14 }}>
@@ -413,12 +428,12 @@ const Overview = () => {
                           onBlur={e => e.currentTarget.style.borderColor = "rgba(57,208,255,0.2)"}
                           onKeyDown={e => {
                             if (e.key === "Enter" && schedForm.title.trim() && schedForm.time.trim()) {
-                              const color = SCHED_COLORS[scheduleItems.length % SCHED_COLORS.length];
-                              setScheduleItems(prev => [...prev, {
-                                t: schedForm.time.trim(), n: schedForm.title.trim().toUpperCase(),
-                                d: schedForm.desc.trim() || "", dur: schedForm.duration.trim() || "—",
-                                ic: schedForm.emoji, c: color,
-                              }]);
+                              if (editingScheduleIdx !== null) {
+                                setScheduleItems(prev => prev.map((item, idx) => idx === editingScheduleIdx ? { ...item, t: schedForm.time.trim(), n: schedForm.title.trim().toUpperCase(), d: schedForm.desc.trim() || "", dur: schedForm.duration.trim() || "—", ic: schedForm.emoji } : item));
+                              } else {
+                                const color = SCHED_COLORS[scheduleItems.length % SCHED_COLORS.length];
+                                setScheduleItems(prev => [...prev, { t: schedForm.time.trim(), n: schedForm.title.trim().toUpperCase(), d: schedForm.desc.trim() || "", dur: schedForm.duration.trim() || "—", ic: schedForm.emoji, c: color, done: false }]);
+                              }
                               setShowScheduleModal(false);
                             }
                           }}
@@ -453,15 +468,36 @@ const Overview = () => {
                           padding: "8px 18px", cursor: "pointer", letterSpacing: 1,
                         }}
                       >CANCEL</button>
+                      {editingScheduleIdx !== null && (
+                        <button
+                          onClick={() => {
+                            setScheduleItems(prev => {
+                              const newItems = [...prev];
+                              newItems[editingScheduleIdx] = { ...newItems[editingScheduleIdx], done: true };
+                              const item = newItems.splice(editingScheduleIdx, 1)[0];
+                              newItems.push(item);
+                              return newItems;
+                            });
+                            setShowScheduleModal(false);
+                          }}
+                          style={{
+                            fontFamily: "'Raleway',sans-serif", fontSize: 11, fontWeight: 600,
+                            color: "#fff", background: "linear-gradient(90deg,#4ade80,#22c55e)",
+                            border: "none", borderRadius: 8,
+                            padding: "8px 18px", cursor: "pointer", letterSpacing: 1,
+                            boxShadow: "0 0 12px rgba(74,222,128,0.3)",
+                          }}
+                        >DONE</button>
+                      )}
                       <button
                         onClick={() => {
                           if (schedForm.title.trim() && schedForm.time.trim()) {
-                            const color = SCHED_COLORS[scheduleItems.length % SCHED_COLORS.length];
-                            setScheduleItems(prev => [...prev, {
-                              t: schedForm.time.trim(), n: schedForm.title.trim().toUpperCase(),
-                              d: schedForm.desc.trim() || "", dur: schedForm.duration.trim() || "—",
-                              ic: schedForm.emoji, c: color,
-                            }]);
+                            if (editingScheduleIdx !== null) {
+                              setScheduleItems(prev => prev.map((item, idx) => idx === editingScheduleIdx ? { ...item, t: schedForm.time.trim(), n: schedForm.title.trim().toUpperCase(), d: schedForm.desc.trim() || "", dur: schedForm.duration.trim() || "—", ic: schedForm.emoji } : item));
+                            } else {
+                              const color = SCHED_COLORS[scheduleItems.length % SCHED_COLORS.length];
+                              setScheduleItems(prev => [...prev, { t: schedForm.time.trim(), n: schedForm.title.trim().toUpperCase(), d: schedForm.desc.trim() || "", dur: schedForm.duration.trim() || "—", ic: schedForm.emoji, c: color, done: false }]);
+                            }
                             setShowScheduleModal(false);
                           }
                         }}
@@ -472,7 +508,7 @@ const Overview = () => {
                           padding: "8px 18px", cursor: "pointer", letterSpacing: 1,
                           boxShadow: "0 0 12px rgba(57,208,255,0.3)",
                         }}
-                      >ADD</button>
+                      >{editingScheduleIdx !== null ? "SAVE" : "ADD"}</button>
                     </div>
                   </div>
                 </div>
