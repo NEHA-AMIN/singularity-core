@@ -303,16 +303,30 @@ const Overview = () => {
                 >+</button>
               </div>
               {scheduleItems.map((s, i) => (
-                <div key={i} style={{ display: "flex", gap: 10, marginBottom: 12, alignItems: "flex-start" }}>
+                <div
+                  key={i}
+                  onClick={() => {
+                    setEditingScheduleIdx(i);
+                    setSchedForm({ time: s.t, title: s.n, duration: s.dur, desc: s.d, emoji: s.ic });
+                    setShowScheduleModal(true);
+                    setShowEmojiPicker(false);
+                  }}
+                  style={{
+                    display: "flex", gap: 10, marginBottom: 12, alignItems: "flex-start",
+                    cursor: "pointer", opacity: s.done ? 0.45 : 1,
+                    transition: "opacity 0.2s ease",
+                  }}
+                >
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 0 }}>
                     <div style={{ width: 28, height: 28, borderRadius: "50%", background: `${s.c}15`, border: `1.5px solid ${s.c}44`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12 }}>{s.ic}</div>
                     {i < scheduleItems.length - 1 && <div style={{ width: 1.5, height: 16, background: `linear-gradient(180deg,${s.c}44,transparent)` }} />}
                   </div>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontFamily: "'Raleway',sans-serif", fontSize: 9, fontWeight: 500, color: s.c, letterSpacing: 0.5 }}>{s.t}</div>
-                    <div style={{ fontFamily: "'Raleway',sans-serif", fontSize: 12, fontWeight: 500, color: "#E8ECF4" }}>{s.n} ({s.dur})</div>
-                    <div style={{ fontFamily: "'Raleway',sans-serif", fontSize: 9, fontWeight: 400, color: "#9AA3B2", marginTop: 1 }}>{s.d}</div>
+                    <div style={{ fontFamily: "'Raleway',sans-serif", fontSize: 12, fontWeight: 500, color: "#E8ECF4", textDecoration: s.done ? "line-through" : "none" }}>{s.n} ({s.dur})</div>
+                    <div style={{ fontFamily: "'Raleway',sans-serif", fontSize: 9, fontWeight: 400, color: "#9AA3B2", marginTop: 1, textDecoration: s.done ? "line-through" : "none" }}>{s.d}</div>
                   </div>
+                  {s.done && <span style={{ fontFamily: "'Raleway',sans-serif", fontSize: 8, color: "#4ade80", fontWeight: 600, letterSpacing: 1 }}>✓ DONE</span>}
                 </div>
               ))}
 
