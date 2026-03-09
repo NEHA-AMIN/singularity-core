@@ -428,12 +428,12 @@ const Overview = () => {
                           onBlur={e => e.currentTarget.style.borderColor = "rgba(57,208,255,0.2)"}
                           onKeyDown={e => {
                             if (e.key === "Enter" && schedForm.title.trim() && schedForm.time.trim()) {
-                              const color = SCHED_COLORS[scheduleItems.length % SCHED_COLORS.length];
-                              setScheduleItems(prev => [...prev, {
-                                t: schedForm.time.trim(), n: schedForm.title.trim().toUpperCase(),
-                                d: schedForm.desc.trim() || "", dur: schedForm.duration.trim() || "—",
-                                ic: schedForm.emoji, c: color,
-                              }]);
+                              if (editingScheduleIdx !== null) {
+                                setScheduleItems(prev => prev.map((item, idx) => idx === editingScheduleIdx ? { ...item, t: schedForm.time.trim(), n: schedForm.title.trim().toUpperCase(), d: schedForm.desc.trim() || "", dur: schedForm.duration.trim() || "—", ic: schedForm.emoji } : item));
+                              } else {
+                                const color = SCHED_COLORS[scheduleItems.length % SCHED_COLORS.length];
+                                setScheduleItems(prev => [...prev, { t: schedForm.time.trim(), n: schedForm.title.trim().toUpperCase(), d: schedForm.desc.trim() || "", dur: schedForm.duration.trim() || "—", ic: schedForm.emoji, c: color, done: false }]);
+                              }
                               setShowScheduleModal(false);
                             }
                           }}
