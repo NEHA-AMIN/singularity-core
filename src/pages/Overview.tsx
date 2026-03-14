@@ -151,7 +151,8 @@ const Overview = () => {
   ]);
   const [showFinanceModal, setShowFinanceModal] = useState(false);
   const [financeForm, setFinanceForm] = useState({ amount: "", category: "food" as "food" | "travel" | "me", details: "" });
-  const [showMonthlyDetails, setShowMonthlyDetails] = useState(false);
+   const [showMonthlyDetails, setShowMonthlyDetails] = useState(false);
+   const [showAllTransactions, setShowAllTransactions] = useState(false);
 
   const FINANCE_CATS = [
     { key: "food" as const, label: "🍔 Food", c: "#FF8A3D" },
