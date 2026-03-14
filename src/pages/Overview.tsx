@@ -1258,7 +1258,7 @@ const Overview = () => {
                     const h = Math.max((b.total / maxVal) * 55, 4);
                     return (
                       <div key={i} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, flex: 1 }}>
-                        <span style={{ fontFamily: "'Orbitron',monospace", fontSize: 8, color: catColor(b.cat) }}>₹{b.total}</span>
+                        <span className="sf-num" style={{ fontSize: 8, color: catColor(b.cat) }}>₹{b.total}</span>
                         <div style={{ width: "100%", maxWidth: 28, height: h, borderRadius: "4px 4px 0 0", background: `linear-gradient(180deg,${catColor(b.cat)},${catColor(b.cat)}88)`, boxShadow: `0 0 8px ${catColor(b.cat)}33`, transition: "height 0.3s ease" }} />
                         <span style={{ fontFamily: "'Raleway',sans-serif", fontSize: 7, fontWeight: 600, color: "#9AA3B2" }}>{FINANCE_CATS[i].label.split(" ")[0]}</span>
                       </div>
