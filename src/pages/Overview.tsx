@@ -126,6 +126,16 @@ const Overview = () => {
   const EMOJI_OPTIONS = ["📐","📝","💼","🔬","🏋","📖","🧘","🏃","💻","🎯","🎨","🎵","🍎","☕","🌙","⚡","🔥","💡","🚀","🎤"];
   const SCHED_COLORS = ["#39D0FF","#8B5CFF","#FF8A3D","#FF4FD8","#4ade80"];
 
+  const now = new Date();
+  const year = now.getFullYear(), month = now.getMonth(), today = now.getDate();
+  const monthName = now.toLocaleString("default", { month: "long" });
+  const dayName = now.toLocaleString("default", { weekday: "short" }).toUpperCase();
+  const hours = now.getHours(), mins = now.getMinutes();
+  const ampm = hours >= 12 ? "PM" : "AM";
+  const h12 = hours % 12 || 12;
+  const timeStr = `${h12}:${String(mins).padStart(2, "0")}`;
+  const todayQuote = QUOTES[today % QUOTES.length];
+
   // Finance state
   type FinanceEntry = { amount: number; category: "food" | "travel" | "me"; details: string; date: string; time: string };
   const [financeView, setFinanceView] = useState<"daily" | "weekly" | "monthly">("daily");
@@ -200,15 +210,6 @@ const Overview = () => {
     setFinanceForm({ amount: "", category: "food", details: "" });
     setShowFinanceModal(false);
   };
-  const now = new Date();
-  const year = now.getFullYear(), month = now.getMonth(), today = now.getDate();
-  const monthName = now.toLocaleString("default", { month: "long" });
-  const dayName = now.toLocaleString("default", { weekday: "short" }).toUpperCase();
-  const hours = now.getHours(), mins = now.getMinutes();
-  const ampm = hours >= 12 ? "PM" : "AM";
-  const h12 = hours % 12 || 12;
-  const timeStr = `${h12}:${String(mins).padStart(2, "0")}`;
-  const todayQuote = QUOTES[today % QUOTES.length];
 
   let streak = 0;
   for (let d = today; d >= 1; d--) {
