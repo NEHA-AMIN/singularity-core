@@ -1275,7 +1275,7 @@ const Overview = () => {
                       <span style={{ fontSize: 10 }}>{e.category === "food" ? "🍔" : e.category === "travel" ? "🚗" : "💅"}</span>
                       <span style={{ fontFamily: "'Raleway',sans-serif", fontSize: 9, color: "#E8ECF4" }}>{e.details || e.category}</span>
                     </div>
-                    <span style={{ fontFamily: "'Orbitron',monospace", fontSize: 9, color: catColor(e.category) }}>₹{e.amount}</span>
+                    <span className="sf-num" style={{ fontSize: 9, color: catColor(e.category) }}>₹{e.amount}</span>
                   </div>
                 ))}
               </div>
