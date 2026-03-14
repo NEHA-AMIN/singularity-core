@@ -1312,8 +1312,9 @@ const Overview = () => {
                     style={{
                       width: "100%", height: 42, background: "rgba(255,255,255,0.04)",
                       border: "1px solid rgba(139,92,255,0.2)", borderRadius: 10,
-                      padding: "0 14px", color: "#E8ECF4", fontFamily: "'Orbitron',monospace", fontSize: 16,
-                      outline: "none", letterSpacing: 1, marginBottom: 12,
+                      padding: "0 14px", color: "#E8ECF4", fontSize: 16,
+                      fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif",
+                      outline: "none", letterSpacing: 0.5, marginBottom: 12,
                     }}
                   />
 
