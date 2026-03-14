@@ -1153,15 +1153,27 @@ const Overview = () => {
             <div className="los-card bcp">
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
                 <div className="los-h" style={{ marginBottom: 0 }}>Finance Overview</div>
-                <button
-                  onClick={() => setShowFinanceModal(true)}
-                  style={{
-                    width: 26, height: 26, borderRadius: "50%",
-                    background: "rgba(139,92,255,0.12)", border: "1px solid rgba(139,92,255,0.35)",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    cursor: "pointer", fontSize: 14, color: "#8B5CFF",
-                  }}
-                >+</button>
+                <div style={{ display: "flex", gap: 6 }}>
+                  <button
+                    onClick={() => setShowAllTransactions(true)}
+                    title="View all transactions"
+                    style={{
+                      width: 26, height: 26, borderRadius: "50%",
+                      background: "rgba(139,92,255,0.12)", border: "1px solid rgba(139,92,255,0.35)",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      cursor: "pointer", fontSize: 12, color: "#8B5CFF",
+                    }}
+                  >👁</button>
+                  <button
+                    onClick={() => setShowFinanceModal(true)}
+                    style={{
+                      width: 26, height: 26, borderRadius: "50%",
+                      background: "rgba(139,92,255,0.12)", border: "1px solid rgba(139,92,255,0.35)",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      cursor: "pointer", fontSize: 14, color: "#8B5CFF",
+                    }}
+                  >+</button>
+                </div>
               </div>
 
               {/* View Tabs */}
