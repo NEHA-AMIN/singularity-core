@@ -151,7 +151,8 @@ const Overview = () => {
   ]);
   const [showFinanceModal, setShowFinanceModal] = useState(false);
   const [financeForm, setFinanceForm] = useState({ amount: "", category: "food" as "food" | "travel" | "me", details: "" });
-  const [showMonthlyDetails, setShowMonthlyDetails] = useState(false);
+   const [showMonthlyDetails, setShowMonthlyDetails] = useState(false);
+   const [showAllTransactions, setShowAllTransactions] = useState(false);
 
   const FINANCE_CATS = [
     { key: "food" as const, label: "🍔 Food", c: "#FF8A3D" },
@@ -1152,15 +1153,27 @@ const Overview = () => {
             <div className="los-card bcp">
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
                 <div className="los-h" style={{ marginBottom: 0 }}>Finance Overview</div>
-                <button
-                  onClick={() => setShowFinanceModal(true)}
-                  style={{
-                    width: 26, height: 26, borderRadius: "50%",
-                    background: "rgba(139,92,255,0.12)", border: "1px solid rgba(139,92,255,0.35)",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    cursor: "pointer", fontSize: 14, color: "#8B5CFF",
-                  }}
-                >+</button>
+                <div style={{ display: "flex", gap: 6 }}>
+                  <button
+                    onClick={() => setShowAllTransactions(true)}
+                    title="View all transactions"
+                    style={{
+                      width: 26, height: 26, borderRadius: "50%",
+                      background: "rgba(139,92,255,0.12)", border: "1px solid rgba(139,92,255,0.35)",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      cursor: "pointer", fontSize: 12, color: "#8B5CFF",
+                    }}
+                  >👁</button>
+                  <button
+                    onClick={() => setShowFinanceModal(true)}
+                    style={{
+                      width: 26, height: 26, borderRadius: "50%",
+                      background: "rgba(139,92,255,0.12)", border: "1px solid rgba(139,92,255,0.35)",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      cursor: "pointer", fontSize: 14, color: "#8B5CFF",
+                    }}
+                  >+</button>
+                </div>
               </div>
 
               {/* View Tabs */}
@@ -1186,7 +1199,7 @@ const Overview = () => {
                 <div style={{ fontFamily: "'Raleway',sans-serif", fontSize: 8, fontWeight: 500, color: "#9AA3B2", letterSpacing: 1 }}>
                   {financeView === "daily" ? "TODAY'S SPEND" : financeView === "weekly" ? "THIS WEEK" : "THIS MONTH"}
                 </div>
-                <div style={{ fontFamily: "'Orbitron',monospace", fontSize: 20, fontWeight: 600, color: "#E8ECF4", letterSpacing: 1 }}>
+                <div className="sf-num" style={{ fontSize: 22, fontWeight: 600, color: "#E8ECF4", letterSpacing: 0.5 }}>
                   ₹{(financeView === "daily" ? dailyTotal : financeView === "weekly" ? weeklyTotal : monthlyTotal).toLocaleString("en-IN")}
                 </div>
               </div>
@@ -1200,7 +1213,7 @@ const Overview = () => {
                     const h = Math.max((b.total / maxVal) * maxH, 4);
                     return (
                       <div key={i} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, flex: 1 }}>
-                        <span style={{ fontFamily: "'Orbitron',monospace", fontSize: 8, color: catColor(b.cat) }}>₹{b.total}</span>
+                        <span className="sf-num" style={{ fontSize: 8, color: catColor(b.cat) }}>₹{b.total}</span>
                         <div style={{ width: "100%", maxWidth: 28, height: h, borderRadius: "4px 4px 0 0", background: `linear-gradient(180deg,${catColor(b.cat)},${catColor(b.cat)}88)`, boxShadow: `0 0 8px ${catColor(b.cat)}33`, transition: "height 0.3s ease" }} />
                         <span style={{ fontFamily: "'Raleway',sans-serif", fontSize: 7, fontWeight: 600, color: "#9AA3B2", letterSpacing: 0.5 }}>{FINANCE_CATS[i].label.split(" ")[0]}</span>
                       </div>
@@ -1245,7 +1258,7 @@ const Overview = () => {
                     const h = Math.max((b.total / maxVal) * 55, 4);
                     return (
                       <div key={i} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, flex: 1 }}>
-                        <span style={{ fontFamily: "'Orbitron',monospace", fontSize: 8, color: catColor(b.cat) }}>₹{b.total}</span>
+                        <span className="sf-num" style={{ fontSize: 8, color: catColor(b.cat) }}>₹{b.total}</span>
                         <div style={{ width: "100%", maxWidth: 28, height: h, borderRadius: "4px 4px 0 0", background: `linear-gradient(180deg,${catColor(b.cat)},${catColor(b.cat)}88)`, boxShadow: `0 0 8px ${catColor(b.cat)}33`, transition: "height 0.3s ease" }} />
                         <span style={{ fontFamily: "'Raleway',sans-serif", fontSize: 7, fontWeight: 600, color: "#9AA3B2" }}>{FINANCE_CATS[i].label.split(" ")[0]}</span>
                       </div>
@@ -1262,7 +1275,7 @@ const Overview = () => {
                       <span style={{ fontSize: 10 }}>{e.category === "food" ? "🍔" : e.category === "travel" ? "🚗" : "💅"}</span>
                       <span style={{ fontFamily: "'Raleway',sans-serif", fontSize: 9, color: "#E8ECF4" }}>{e.details || e.category}</span>
                     </div>
-                    <span style={{ fontFamily: "'Orbitron',monospace", fontSize: 9, color: catColor(e.category) }}>₹{e.amount}</span>
+                    <span className="sf-num" style={{ fontSize: 9, color: catColor(e.category) }}>₹{e.amount}</span>
                   </div>
                 ))}
               </div>
@@ -1299,8 +1312,9 @@ const Overview = () => {
                     style={{
                       width: "100%", height: 42, background: "rgba(255,255,255,0.04)",
                       border: "1px solid rgba(139,92,255,0.2)", borderRadius: 10,
-                      padding: "0 14px", color: "#E8ECF4", fontFamily: "'Orbitron',monospace", fontSize: 16,
-                      outline: "none", letterSpacing: 1, marginBottom: 12,
+                      padding: "0 14px", color: "#E8ECF4", fontSize: 16,
+                      fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif",
+                      outline: "none", letterSpacing: 0.5, marginBottom: 12,
                     }}
                   />
 
@@ -1357,6 +1371,86 @@ const Overview = () => {
                         boxShadow: "0 0 12px rgba(139,92,255,0.3)",
                       }}
                     >ADD</button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ALL TRANSACTIONS MODAL */}
+            {showAllTransactions && (
+              <div
+                onClick={() => setShowAllTransactions(false)}
+                style={{
+                  position: "fixed", inset: 0, zIndex: 9999,
+                  background: "rgba(0,0,0,0.7)", backdropFilter: "blur(6px)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                }}
+              >
+                <div
+                  onClick={e => e.stopPropagation()}
+                  style={{
+                    width: 400, maxHeight: "80vh", background: "#0a0a14",
+                    border: "1px solid rgba(139,92,255,0.3)", borderRadius: 16,
+                    padding: 24, boxShadow: "0 0 40px rgba(139,92,255,0.15)",
+                    animation: "slideAppend 0.35s cubic-bezier(0.22,1,0.36,1) forwards",
+                    display: "flex", flexDirection: "column",
+                  }}
+                >
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+                    <div style={{ fontFamily: "'Raleway',sans-serif", fontSize: 14, fontWeight: 600, color: "#E8ECF4", letterSpacing: 1.5, textTransform: "uppercase" }}>All Transactions</div>
+                    <button
+                      onClick={() => setShowAllTransactions(false)}
+                      style={{
+                        width: 28, height: 28, borderRadius: "50%",
+                        background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)",
+                        color: "#9AA3B2", cursor: "pointer", fontSize: 14,
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                      }}
+                    >✕</button>
+                  </div>
+                  <div className="sf-num" style={{ textAlign: "center", marginBottom: 16 }}>
+                    <div style={{ fontFamily: "'Raleway',sans-serif", fontSize: 9, fontWeight: 500, color: "#9AA3B2", letterSpacing: 1.5 }}>TOTAL RECORDED</div>
+                    <div style={{ fontSize: 24, fontWeight: 600, color: "#E8ECF4", marginTop: 4 }}>
+                      ₹{financeEntries.reduce((s, e) => s + e.amount, 0).toLocaleString("en-IN")}
+                    </div>
+                  </div>
+                  <div style={{ overflowY: "auto", flex: 1, paddingRight: 4 }}>
+                    {financeEntries.length === 0 ? (
+                      <div style={{ textAlign: "center", padding: 20, fontFamily: "'Raleway',sans-serif", fontSize: 12, color: "#9AA3B2" }}>No transactions yet</div>
+                    ) : (
+                      financeEntries.map((e, i) => (
+                        <div key={i} style={{
+                          display: "flex", justifyContent: "space-between", alignItems: "center",
+                          padding: "10px 8px", borderBottom: "1px solid rgba(139,92,255,0.08)",
+                          transition: "background 0.15s ease",
+                        }}
+                          onMouseEnter={ev => ev.currentTarget.style.background = "rgba(139,92,255,0.06)"}
+                          onMouseLeave={ev => ev.currentTarget.style.background = "transparent"}
+                        >
+                          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                            <div style={{
+                              width: 32, height: 32, borderRadius: 8,
+                              background: `${catColor(e.category)}15`,
+                              border: `1px solid ${catColor(e.category)}30`,
+                              display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14,
+                            }}>
+                              {e.category === "food" ? "🍔" : e.category === "travel" ? "🚗" : "💅"}
+                            </div>
+                            <div>
+                              <div style={{ fontFamily: "'Raleway',sans-serif", fontSize: 12, fontWeight: 500, color: "#E8ECF4" }}>
+                                {e.details || e.category.charAt(0).toUpperCase() + e.category.slice(1)}
+                              </div>
+                              <div style={{ fontFamily: "'Raleway',sans-serif", fontSize: 9, color: "#9AA3B2", marginTop: 2 }}>
+                                {e.date} · {e.time}
+                              </div>
+                            </div>
+                          </div>
+                          <div className="sf-num" style={{ fontSize: 14, fontWeight: 600, color: catColor(e.category) }}>
+                            ₹{e.amount.toLocaleString("en-IN")}
+                          </div>
+                        </div>
+                      ))
+                    )}
                   </div>
                 </div>
               </div>
