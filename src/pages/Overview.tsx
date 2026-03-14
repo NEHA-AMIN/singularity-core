@@ -125,6 +125,7 @@ const Overview = () => {
 
   const EMOJI_OPTIONS = ["📐","📝","💼","🔬","🏋","📖","🧘","🏃","💻","🎯","🎨","🎵","🍎","☕","🌙","⚡","🔥","💡","🚀","🎤"];
   const SCHED_COLORS = ["#39D0FF","#8B5CFF","#FF8A3D","#FF4FD8","#4ade80"];
+
   const now = new Date();
   const year = now.getFullYear(), month = now.getMonth(), today = now.getDate();
   const monthName = now.toLocaleString("default", { month: "long" });
@@ -134,6 +135,81 @@ const Overview = () => {
   const h12 = hours % 12 || 12;
   const timeStr = `${h12}:${String(mins).padStart(2, "0")}`;
   const todayQuote = QUOTES[today % QUOTES.length];
+
+  // Finance state
+  type FinanceEntry = { amount: number; category: "food" | "travel" | "me"; details: string; date: string; time: string };
+  const [financeView, setFinanceView] = useState<"daily" | "weekly" | "monthly">("daily");
+  const [financeEntries, setFinanceEntries] = useState<FinanceEntry[]>([
+    { amount: 150, category: "food", date: "2026-03-14", time: "08:30", details: "Breakfast" },
+    { amount: 200, category: "travel", date: "2026-03-14", time: "09:15", details: "Auto to office" },
+    { amount: 500, category: "me", date: "2026-03-13", time: "18:00", details: "Skincare" },
+    { amount: 300, category: "food", date: "2026-03-12", time: "13:00", details: "Lunch" },
+    { amount: 120, category: "food", date: "2026-03-11", time: "20:00", details: "Dinner snacks" },
+    { amount: 800, category: "travel", date: "2026-03-10", time: "07:00", details: "Cab" },
+    { amount: 250, category: "me", date: "2026-03-09", time: "16:00", details: "Book" },
+    { amount: 400, category: "food", date: "2026-03-08", time: "12:30", details: "Groceries" },
+  ]);
+  const [showFinanceModal, setShowFinanceModal] = useState(false);
+  const [financeForm, setFinanceForm] = useState({ amount: "", category: "food" as "food" | "travel" | "me", details: "" });
+  const [showMonthlyDetails, setShowMonthlyDetails] = useState(false);
+
+  const FINANCE_CATS = [
+    { key: "food" as const, label: "🍔 Food", c: "#FF8A3D" },
+    { key: "travel" as const, label: "🚗 Travel", c: "#39D0FF" },
+    { key: "me" as const, label: "💅 Me", c: "#FF4FD8" },
+  ];
+  const catColor = (cat: string) => FINANCE_CATS.find(c => c.key === cat)?.c ?? "#8B5CFF";
+
+  const todayStr = dk(year, month, today);
+  const getWeekDates = () => {
+    const d = new Date(year, month, today);
+    const dayOfWeek = d.getDay();
+    const start = new Date(d); start.setDate(d.getDate() - dayOfWeek);
+    const dates: string[] = [];
+    for (let i = 0; i < 7; i++) {
+      const dd = new Date(start); dd.setDate(start.getDate() + i);
+      dates.push(dk(dd.getFullYear(), dd.getMonth(), dd.getDate()));
+    }
+    return dates;
+  };
+
+  const dailyTotal = financeEntries.filter(e => e.date === todayStr).reduce((s, e) => s + e.amount, 0);
+  const weekDates = getWeekDates();
+  const weeklyTotal = financeEntries.filter(e => weekDates.includes(e.date)).reduce((s, e) => s + e.amount, 0);
+  const monthlyTotal = financeEntries.filter(e => e.date.startsWith(`${year}-${String(month + 1).padStart(2, "0")}`)).reduce((s, e) => s + e.amount, 0);
+
+  const getDailyBarData = () => {
+    const cats = ["food", "travel", "me"] as const;
+    const todayEntries = financeEntries.filter(e => e.date === todayStr);
+    return cats.map(c => ({ cat: c, total: todayEntries.filter(e => e.category === c).reduce((s, e) => s + e.amount, 0) }));
+  };
+
+  const getWeeklyBarData = () => {
+    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    return weekDates.map((d, i) => ({ label: days[i], total: financeEntries.filter(e => e.date === d).reduce((s, e) => s + e.amount, 0) }));
+  };
+
+  const getMonthlyBarData = () => {
+    const cats = ["food", "travel", "me"] as const;
+    const monthEntries = financeEntries.filter(e => e.date.startsWith(`${year}-${String(month + 1).padStart(2, "0")}`));
+    return cats.map(c => ({ cat: c, total: monthEntries.filter(e => e.category === c).reduce((s, e) => s + e.amount, 0) }));
+  };
+
+  const handleAddExpense = () => {
+    const amt = parseFloat(financeForm.amount);
+    if (!amt || amt <= 0) return;
+    const now2 = new Date();
+    const entry: FinanceEntry = {
+      amount: amt,
+      category: financeForm.category,
+      details: financeForm.details,
+      date: dk(now2.getFullYear(), now2.getMonth(), now2.getDate()),
+      time: `${String(now2.getHours()).padStart(2, "0")}:${String(now2.getMinutes()).padStart(2, "0")}`,
+    };
+    setFinanceEntries(prev => [entry, ...prev]);
+    setFinanceForm({ amount: "", category: "food", details: "" });
+    setShowFinanceModal(false);
+  };
 
   let streak = 0;
   for (let d = today; d >= 1; d--) {
@@ -1074,31 +1150,217 @@ const Overview = () => {
           <div className="los-grid3" style={{ marginBottom: 14 }}>
             {/* FINANCE */}
             <div className="los-card bcp">
-              <div className="los-h">Finance Overview</div>
-              <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "center", gap: 16, height: 80, marginBottom: 12, padding: "0 10px" }}>
-                {[
-                  { l: "INCOME", h: 70, c: "#39D0FF" },
-                  { l: "EXPENSES", h: 35, c: "#FF4FD8" },
-                  { l: "SAVINGS", h: 50, c: "#8B5CFF" },
-                ].map((b, i) => (
-                  <div key={i} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, flex: 1 }}>
-                    <div style={{ width: "100%", maxWidth: 28, height: b.h, borderRadius: "4px 4px 0 0", background: `linear-gradient(180deg,${b.c},${b.c}88)`, boxShadow: `0 0 8px ${b.c}33` }} />
-                    <span style={{ fontFamily: "'Raleway',sans-serif", fontSize: 7, fontWeight: 600, color: "#9AA3B2", letterSpacing: 0.5 }}>{b.l}</span>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+                <div className="los-h" style={{ marginBottom: 0 }}>Finance Overview</div>
+                <button
+                  onClick={() => setShowFinanceModal(true)}
+                  style={{
+                    width: 26, height: 26, borderRadius: "50%",
+                    background: "rgba(139,92,255,0.12)", border: "1px solid rgba(139,92,255,0.35)",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    cursor: "pointer", fontSize: 14, color: "#8B5CFF",
+                  }}
+                >+</button>
+              </div>
+
+              {/* View Tabs */}
+              <div style={{ display: "flex", gap: 6, marginBottom: 12 }}>
+                {(["daily", "weekly", "monthly"] as const).map(v => (
+                  <button
+                    key={v}
+                    onClick={() => { setFinanceView(v); setShowMonthlyDetails(false); }}
+                    style={{
+                      flex: 1, padding: "5px 0", borderRadius: 8, cursor: "pointer",
+                      fontFamily: "'Raleway',sans-serif", fontSize: 9, fontWeight: 600,
+                      letterSpacing: 1, textTransform: "uppercase",
+                      background: financeView === v ? "rgba(139,92,255,0.2)" : "rgba(255,255,255,0.04)",
+                      border: financeView === v ? "1px solid rgba(139,92,255,0.4)" : "1px solid rgba(255,255,255,0.08)",
+                      color: financeView === v ? "#8B5CFF" : "#9AA3B2",
+                    }}
+                  >{v}</button>
+                ))}
+              </div>
+
+              {/* Amount Display */}
+              <div style={{ textAlign: "center", marginBottom: 10 }}>
+                <div style={{ fontFamily: "'Raleway',sans-serif", fontSize: 8, fontWeight: 500, color: "#9AA3B2", letterSpacing: 1 }}>
+                  {financeView === "daily" ? "TODAY'S SPEND" : financeView === "weekly" ? "THIS WEEK" : "THIS MONTH"}
+                </div>
+                <div style={{ fontFamily: "'Orbitron',monospace", fontSize: 20, fontWeight: 600, color: "#E8ECF4", letterSpacing: 1 }}>
+                  ₹{(financeView === "daily" ? dailyTotal : financeView === "weekly" ? weeklyTotal : monthlyTotal).toLocaleString("en-IN")}
+                </div>
+              </div>
+
+              {/* Bar Charts */}
+              {financeView === "daily" && (
+                <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "center", gap: 12, height: 70, marginBottom: 8, padding: "0 6px" }}>
+                  {getDailyBarData().map((b, i) => {
+                    const maxH = 60;
+                    const maxVal = Math.max(...getDailyBarData().map(x => x.total), 1);
+                    const h = Math.max((b.total / maxVal) * maxH, 4);
+                    return (
+                      <div key={i} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, flex: 1 }}>
+                        <span style={{ fontFamily: "'Orbitron',monospace", fontSize: 8, color: catColor(b.cat) }}>₹{b.total}</span>
+                        <div style={{ width: "100%", maxWidth: 28, height: h, borderRadius: "4px 4px 0 0", background: `linear-gradient(180deg,${catColor(b.cat)},${catColor(b.cat)}88)`, boxShadow: `0 0 8px ${catColor(b.cat)}33`, transition: "height 0.3s ease" }} />
+                        <span style={{ fontFamily: "'Raleway',sans-serif", fontSize: 7, fontWeight: 600, color: "#9AA3B2", letterSpacing: 0.5 }}>{FINANCE_CATS[i].label.split(" ")[0]}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              {financeView === "weekly" && (
+                <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "center", gap: 4, height: 70, marginBottom: 8 }}>
+                  {getWeeklyBarData().map((b, i) => {
+                    const maxVal = Math.max(...getWeeklyBarData().map(x => x.total), 1);
+                    const h = Math.max((b.total / maxVal) * 55, 3);
+                    return (
+                      <div key={i} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 3, flex: 1 }}>
+                        <div style={{ width: "100%", maxWidth: 18, height: h, borderRadius: "3px 3px 0 0", background: `linear-gradient(180deg,#8B5CFF,#8B5CFF88)`, boxShadow: "0 0 6px rgba(139,92,255,0.3)", transition: "height 0.3s ease" }} />
+                        <span style={{ fontFamily: "'Raleway',sans-serif", fontSize: 6, fontWeight: 600, color: "#9AA3B2" }}>{b.label}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              {financeView === "monthly" && !showMonthlyDetails && (
+                <div style={{ textAlign: "center", marginBottom: 8 }}>
+                  <button
+                    onClick={() => setShowMonthlyDetails(true)}
+                    style={{
+                      fontFamily: "'Raleway',sans-serif", fontSize: 10, fontWeight: 600,
+                      color: "#8B5CFF", background: "rgba(139,92,255,0.1)",
+                      border: "1px solid rgba(139,92,255,0.3)", borderRadius: 8,
+                      padding: "6px 18px", cursor: "pointer", letterSpacing: 1,
+                    }}
+                  >📊 DETAILS</button>
+                </div>
+              )}
+
+              {financeView === "monthly" && showMonthlyDetails && (
+                <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "center", gap: 12, height: 70, marginBottom: 8, padding: "0 6px" }}>
+                  {getMonthlyBarData().map((b, i) => {
+                    const maxVal = Math.max(...getMonthlyBarData().map(x => x.total), 1);
+                    const h = Math.max((b.total / maxVal) * 55, 4);
+                    return (
+                      <div key={i} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, flex: 1 }}>
+                        <span style={{ fontFamily: "'Orbitron',monospace", fontSize: 8, color: catColor(b.cat) }}>₹{b.total}</span>
+                        <div style={{ width: "100%", maxWidth: 28, height: h, borderRadius: "4px 4px 0 0", background: `linear-gradient(180deg,${catColor(b.cat)},${catColor(b.cat)}88)`, boxShadow: `0 0 8px ${catColor(b.cat)}33`, transition: "height 0.3s ease" }} />
+                        <span style={{ fontFamily: "'Raleway',sans-serif", fontSize: 7, fontWeight: 600, color: "#9AA3B2" }}>{FINANCE_CATS[i].label.split(" ")[0]}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* Recent transactions */}
+              <div style={{ borderTop: "1px solid rgba(139,92,255,0.15)", paddingTop: 8 }}>
+                {financeEntries.filter(e => financeView === "daily" ? e.date === todayStr : financeView === "weekly" ? weekDates.includes(e.date) : e.date.startsWith(`${year}-${String(month+1).padStart(2,"0")}`)).slice(0, 3).map((e, i) => (
+                  <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "4px 0", borderBottom: "1px solid rgba(255,255,255,0.03)" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                      <span style={{ fontSize: 10 }}>{e.category === "food" ? "🍔" : e.category === "travel" ? "🚗" : "💅"}</span>
+                      <span style={{ fontFamily: "'Raleway',sans-serif", fontSize: 9, color: "#E8ECF4" }}>{e.details || e.category}</span>
+                    </div>
+                    <span style={{ fontFamily: "'Orbitron',monospace", fontSize: 9, color: catColor(e.category) }}>₹{e.amount}</span>
                   </div>
                 ))}
               </div>
-              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-                <div>
-                  <div style={{ fontFamily: "'Raleway',sans-serif", fontSize: 8, fontWeight: 500, color: "#9AA3B2" }}>BALANCE:</div>
-                  <div style={{ fontFamily: "'Orbitron',monospace", fontSize: 14, fontWeight: 400, color: "#E8ECF4", letterSpacing: 1 }}>₹1,00,000</div>
-                </div>
-                <div style={{ textAlign: "right" }}>
-                  <div style={{ fontFamily: "'Raleway',sans-serif", fontSize: 8, fontWeight: 500, color: "#9AA3B2" }}>MONTHLY:</div>
-                  <div style={{ fontFamily: "'Orbitron',monospace", fontSize: 14, fontWeight: 400, color: "#E8ECF4", letterSpacing: 1 }}>₹25,000</div>
+            </div>
+
+            {/* FINANCE ADD MODAL */}
+            {showFinanceModal && (
+              <div
+                onClick={() => setShowFinanceModal(false)}
+                style={{
+                  position: "fixed", inset: 0, zIndex: 9999,
+                  background: "rgba(0,0,0,0.7)", backdropFilter: "blur(6px)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                }}
+              >
+                <div
+                  onClick={e => e.stopPropagation()}
+                  style={{
+                    width: 360, background: "#0a0a14",
+                    border: "1px solid rgba(139,92,255,0.3)", borderRadius: 16,
+                    padding: 24, boxShadow: "0 0 40px rgba(139,92,255,0.15)",
+                    animation: "slideAppend 0.35s cubic-bezier(0.22,1,0.36,1) forwards",
+                  }}
+                >
+                  <div style={{ fontFamily: "'Raleway',sans-serif", fontSize: 14, fontWeight: 600, color: "#E8ECF4", letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 16 }}>Add Expense</div>
+
+                  {/* Amount */}
+                  <input
+                    autoFocus
+                    type="number"
+                    value={financeForm.amount}
+                    onChange={e => setFinanceForm(p => ({ ...p, amount: e.target.value }))}
+                    placeholder="Amount (₹)"
+                    style={{
+                      width: "100%", height: 42, background: "rgba(255,255,255,0.04)",
+                      border: "1px solid rgba(139,92,255,0.2)", borderRadius: 10,
+                      padding: "0 14px", color: "#E8ECF4", fontFamily: "'Orbitron',monospace", fontSize: 16,
+                      outline: "none", letterSpacing: 1, marginBottom: 12,
+                    }}
+                  />
+
+                  {/* Category */}
+                  <div style={{ fontFamily: "'Raleway',sans-serif", fontSize: 9, fontWeight: 600, color: "#9AA3B2", letterSpacing: 1.5, marginBottom: 8 }}>CATEGORY</div>
+                  <div style={{ display: "flex", gap: 8, marginBottom: 14 }}>
+                    {FINANCE_CATS.map(cat => (
+                      <button
+                        key={cat.key}
+                        onClick={() => setFinanceForm(p => ({ ...p, category: cat.key }))}
+                        style={{
+                          flex: 1, padding: "8px 0", borderRadius: 10, cursor: "pointer",
+                          fontFamily: "'Raleway',sans-serif", fontSize: 11, fontWeight: 600,
+                          background: financeForm.category === cat.key ? `${cat.c}22` : "rgba(255,255,255,0.04)",
+                          border: financeForm.category === cat.key ? `1px solid ${cat.c}66` : "1px solid rgba(255,255,255,0.08)",
+                          color: financeForm.category === cat.key ? cat.c : "#9AA3B2",
+                          transition: "all 0.2s ease",
+                        }}
+                      >{cat.label}</button>
+                    ))}
+                  </div>
+
+                  {/* Details */}
+                  <div style={{ fontFamily: "'Raleway',sans-serif", fontSize: 9, fontWeight: 600, color: "#9AA3B2", letterSpacing: 1.5, marginBottom: 8 }}>DETAILS (OPTIONAL)</div>
+                  <textarea
+                    value={financeForm.details}
+                    onChange={e => setFinanceForm(p => ({ ...p, details: e.target.value }))}
+                    placeholder="What was this for?"
+                    style={{
+                      width: "100%", minHeight: 60, background: "rgba(255,255,255,0.04)",
+                      border: "1px solid rgba(139,92,255,0.2)", borderRadius: 10,
+                      padding: 12, color: "#E8ECF4", fontFamily: "'Raleway',sans-serif", fontSize: 12,
+                      resize: "vertical", outline: "none",
+                    }}
+                  />
+
+                  <div style={{ display: "flex", gap: 10, marginTop: 18, justifyContent: "flex-end" }}>
+                    <button
+                      onClick={() => { setShowFinanceModal(false); setFinanceForm({ amount: "", category: "food", details: "" }); }}
+                      style={{
+                        fontFamily: "'Raleway',sans-serif", fontSize: 11, fontWeight: 600,
+                        color: "#9AA3B2", background: "rgba(255,255,255,0.05)",
+                        border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8,
+                        padding: "8px 18px", cursor: "pointer", letterSpacing: 1,
+                      }}
+                    >CANCEL</button>
+                    <button
+                      onClick={handleAddExpense}
+                      style={{
+                        fontFamily: "'Raleway',sans-serif", fontSize: 11, fontWeight: 600,
+                        color: "#fff", background: "linear-gradient(90deg,#8B5CFF,#39D0FF)",
+                        border: "none", borderRadius: 8,
+                        padding: "8px 18px", cursor: "pointer", letterSpacing: 1,
+                        boxShadow: "0 0 12px rgba(139,92,255,0.3)",
+                      }}
+                    >ADD</button>
+                  </div>
                 </div>
               </div>
-              <div style={{ fontFamily: "'Raleway',sans-serif", fontSize: 9, fontWeight: 500, color: "#FF4FD8" }}>SAVINGS GOAL: Room Revamp (35%)</div>
-            </div>
+            )}
 
             {/* HEALTH METRICS */}
             <div className="los-card bcp" style={{ padding: "16px 14px" }}>
