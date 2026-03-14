@@ -1199,7 +1199,7 @@ const Overview = () => {
                 <div style={{ fontFamily: "'Raleway',sans-serif", fontSize: 8, fontWeight: 500, color: "#9AA3B2", letterSpacing: 1 }}>
                   {financeView === "daily" ? "TODAY'S SPEND" : financeView === "weekly" ? "THIS WEEK" : "THIS MONTH"}
                 </div>
-                <div style={{ fontFamily: "'Orbitron',monospace", fontSize: 20, fontWeight: 600, color: "#E8ECF4", letterSpacing: 1 }}>
+                <div className="sf-num" style={{ fontSize: 22, fontWeight: 600, color: "#E8ECF4", letterSpacing: 0.5 }}>
                   ₹{(financeView === "daily" ? dailyTotal : financeView === "weekly" ? weeklyTotal : monthlyTotal).toLocaleString("en-IN")}
                 </div>
               </div>
